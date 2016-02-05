@@ -1,411 +1,1348 @@
 <!doctype html>
 <html lang="en">
 
-	<head>
-		<meta charset="utf-8">
+    <head>
+        <meta charset="utf-8">
 
-		<title>reveal.js – The HTML Presentation Framework</title>
+        <title>D3.js</title>
 
-		<meta name="description" content="A framework for easily creating beautiful presentations using HTML">
-		<meta name="author" content="Hakim El Hattab">
+        <meta name="description" content="Data-Driven Documents">
+        <meta name="author" content="Georgi Krastev">
 
-		<meta name="apple-mobile-web-app-capable" content="yes">
-		<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+        <meta name="apple-mobile-web-app-capable" content="yes">
+        <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 
-		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
 
-		<link rel="stylesheet" href="css/reveal.css">
-		<link rel="stylesheet" href="css/theme/black.css" id="theme">
+        <link rel="stylesheet" href="css/reveal.css">
+        <link rel="stylesheet" href="css/theme/solarized.css" id="theme">
 
-		<!-- Code syntax highlighting -->
-		<link rel="stylesheet" href="lib/css/zenburn.css">
+        <!-- Code syntax highlighting -->
+        <link rel="stylesheet" href="lib/css/zenburn.css">
 
-		<!-- Printing and PDF exports -->
-		<script>
-			var link = document.createElement( 'link' );
-			link.rel = 'stylesheet';
-			link.type = 'text/css';
-			link.href = window.location.search.match( /print-pdf/gi ) ? 'css/print/pdf.css' : 'css/print/paper.css';
-			document.getElementsByTagName( 'head' )[0].appendChild( link );
-		</script>
+        <!-- Printing and PDF exports -->
+        <script>
+            var link = document.createElement( 'link' );
+            link.rel = 'stylesheet';
+            link.type = 'text/css';
+            link.href = window.location.search.match( /print-pdf/gi ) ? 'css/print/pdf.css' : 'css/print/paper.css';
+            document.getElementsByTagName( 'head' )[0].appendChild( link );
+        </script>
 
-		<!--[if lt IE 9]>
-		<script src="lib/js/html5shiv.js"></script>
-		<![endif]-->
-	</head>
+        <style type="text/css">
+            .reveal .footer {
+                position: relative;
+                bottom: 0%;
+                font-size: 0.8em;
+                padding-top: 2em;
+            }
+        </style>
 
-	<body>
+<style id="migration-style">
+#migration #circle circle {
+  fill: none;
+  pointer-events: all;
+}
 
-		<div class="reveal">
+#migration .group path {
+  fill-opacity: .5;
+}
 
-			<!-- Any section element inside of this container is displayed as a slide -->
-			<div class="slides">
-				<section>
-					<h1>Reveal.js</h1>
-					<h3>The HTML Presentation Framework</h3>
-					<p>
-						<small>Created by <a href="http://hakim.se">Hakim El Hattab</a> / <a href="http://twitter.com/hakimel">@hakimel</a></small>
-					</p>
-				</section>
+#migration path.chord {
+  stroke: #000;
+  stroke-width: .25px;
+}
 
-				<section>
-					<h2>Hello There</h2>
-					<p>
-						reveal.js enables you to create beautiful interactive slide decks using HTML. This presentation will show you examples of what it can do.
-					</p>
-				</section>
+#migration #circle:hover path.fade {
+  display: none;
+}
 
-				<!-- Example of nested vertical slides -->
-				<section>
-					<section>
-						<h2>Vertical Slides</h2>
-						<p>Slides can be nested inside of each other.</p>
-						<p>Use the <em>Space</em> key to navigate through all slides.</p>
-						<br>
-						<a href="#" class="navigate-down">
-							<img width="178" height="238" data-src="https://s3.amazonaws.com/hakim-static/reveal-js/arrow.png" alt="Down arrow">
-						</a>
-					</section>
-					<section>
-						<h2>Basement Level 1</h2>
-						<p>Nested slides are useful for adding additional detail underneath a high level horizontal slide.</p>
-					</section>
-					<section>
-						<h2>Basement Level 2</h2>
-						<p>That's it, time to go back up.</p>
-						<br>
-						<a href="#/2">
-							<img width="178" height="238" data-src="https://s3.amazonaws.com/hakim-static/reveal-js/arrow.png" alt="Up arrow" style="transform: rotate(180deg); -webkit-transform: rotate(180deg);">
-						</a>
-					</section>
-				</section>
+#migration {
+  font-family: 'Open Sans', sans-serif;
+  font-size: 0.25em;
+  font-weight: bold;
+}
+</style>
 
-				<section>
-					<h2>Slides</h2>
-					<p>
-						Not a coder? Not a problem. There's a fully-featured visual editor for authoring these, try it out at <a href="http://slides.com" target="_blank">http://slides.com</a>.
-					</p>
-				</section>
+<style type="text/css" id="motivation-style">
+#motivation svg {
+  font: 0.2em sans-serif;
+}
 
-				<section>
-					<h2>Point of View</h2>
-					<p>
-						Press <strong>ESC</strong> to enter the slide overview.
-					</p>
-					<p>
-						Hold down alt and click on any element to zoom in on it using <a href="http://lab.hakim.se/zoom-js">zoom.js</a>. Alt + click anywhere to zoom back out.
-					</p>
-				</section>
+#motivation .y.axis path {
+  display: none;
+}
 
-				<section>
-					<h2>Touch Optimized</h2>
-					<p>
-						Presentations look great on touch devices, like mobile phones and tablets. Simply swipe through your slides.
-					</p>
-				</section>
+#motivation .y.axis line {
+  stroke: #fff;
+  stroke-opacity: .2;
+  shape-rendering: crispEdges;
+}
 
-				<section data-markdown>
-					<script type="text/template">
-						## Markdown support
+#motivation .y.axis .zero line {
+  stroke: #000;
+  stroke-opacity: 1;
+}
 
-						Write content using inline or external Markdown.
-						Instructions and more info available in the [readme](https://github.com/hakimel/reveal.js#markdown).
+#motivation .birthyear,
+#motivation .age {
+  text-anchor: middle;
+}
 
-						```
-						<section data-markdown>
-						  ## Markdown support
+#motivation .birthyear {
+  fill: #fff;
+}
 
-						  Write content using inline or external Markdown.
-						  Instructions and more info available in the [readme](https://github.com/hakimel/reveal.js#markdown).
-						</section>
-						```
-					</script>
-				</section>
+#motivation rect {
+  fill-opacity: .6;
+  fill: #e377c2;
+}
 
-				<section>
-					<section id="fragments">
-						<h2>Fragments</h2>
-						<p>Hit the next arrow...</p>
-						<p class="fragment">... to step through ...</p>
-						<p><span class="fragment">... a</span> <span class="fragment">fragmented</span> <span class="fragment">slide.</span></p>
+#motivation rect:first-child {
+  fill: #1f77b4;
+}
+</style>
 
-						<aside class="notes">
-							This slide has fragments which are also stepped through in the notes window.
-						</aside>
-					</section>
-					<section>
-						<h2>Fragment Styles</h2>
-						<p>There's different types of fragments, like:</p>
-						<p class="fragment grow">grow</p>
-						<p class="fragment shrink">shrink</p>
-						<p class="fragment fade-out">fade-out</p>
-						<p class="fragment current-visible">current-visible</p>
-						<p class="fragment highlight-red">highlight-red</p>
-						<p class="fragment highlight-blue">highlight-blue</p>
-					</section>
-				</section>
+<style type="text/css" id="map-style">
+#map path {
+  fill: none;
+  stroke-linejoin: round;
+}
 
-				<section id="transitions">
-					<h2>Transition Styles</h2>
-					<p>
-						You can select from different transitions, like: <br>
-						<a href="?transition=none#/transitions">None</a> -
-						<a href="?transition=fade#/transitions">Fade</a> -
-						<a href="?transition=slide#/transitions">Slide</a> -
-						<a href="?transition=convex#/transitions">Convex</a> -
-						<a href="?transition=concave#/transitions">Concave</a> -
-						<a href="?transition=zoom#/transitions">Zoom</a>
-					</p>
-				</section>
+#map .land {
+  fill: #ddd;
+}
 
-				<section id="themes">
-					<h2>Themes</h2>
-					<p>
-						reveal.js comes with a few themes built in: <br>
-						<!-- Hacks to swap themes after the page has loaded. Not flexible and only intended for the reveal.js demo deck. -->
-						<a href="#" onclick="document.getElementById('theme').setAttribute('href','css/theme/black.css'); return false;">Black (default)</a> -
-						<a href="#" onclick="document.getElementById('theme').setAttribute('href','css/theme/white.css'); return false;">White</a> -
-						<a href="#" onclick="document.getElementById('theme').setAttribute('href','css/theme/league.css'); return false;">League</a> -
-						<a href="#" onclick="document.getElementById('theme').setAttribute('href','css/theme/sky.css'); return false;">Sky</a> -
-						<a href="#" onclick="document.getElementById('theme').setAttribute('href','css/theme/beige.css'); return false;">Beige</a> -
-						<a href="#" onclick="document.getElementById('theme').setAttribute('href','css/theme/simple.css'); return false;">Simple</a> <br>
-						<a href="#" onclick="document.getElementById('theme').setAttribute('href','css/theme/serif.css'); return false;">Serif</a> -
-						<a href="#" onclick="document.getElementById('theme').setAttribute('href','css/theme/blood.css'); return false;">Blood</a> -
-						<a href="#" onclick="document.getElementById('theme').setAttribute('href','css/theme/night.css'); return false;">Night</a> -
-						<a href="#" onclick="document.getElementById('theme').setAttribute('href','css/theme/moon.css'); return false;">Moon</a> -
-						<a href="#" onclick="document.getElementById('theme').setAttribute('href','css/theme/solarized.css'); return false;">Solarized</a>
-					</p>
-				</section>
+#map .states,
+#map .hexagons path {
+  stroke: #fff;
+}
+</style>
 
-				<section>
-					<section data-background="#dddddd">
-						<h2>Slide Backgrounds</h2>
-						<p>
-							Set <code>data-background="#dddddd"</code> on a slide to change the background color. All CSS color formats are supported.
-						</p>
-						<a href="#" class="navigate-down">
-							<img width="178" height="238" data-src="https://s3.amazonaws.com/hakim-static/reveal-js/arrow.png" alt="Down arrow">
-						</a>
-					</section>
-					<section data-background="https://s3.amazonaws.com/hakim-static/reveal-js/image-placeholder.png">
-						<h2>Image Backgrounds</h2>
-						<pre><code class="hljs">&lt;section data-background="image.png"&gt;</code></pre>
-					</section>
-					<section data-background="https://s3.amazonaws.com/hakim-static/reveal-js/image-placeholder.png" data-background-repeat="repeat" data-background-size="100px">
-						<h2>Tiled Backgrounds</h2>
-						<pre><code class="hljs" style="word-wrap: break-word;">&lt;section data-background="image.png" data-background-repeat="repeat" data-background-size="100px"&gt;</code></pre>
-					</section>
-					<section data-background-video="https://s3.amazonaws.com/static.slid.es/site/homepage/v1/homepage-video-editor.mp4,https://s3.amazonaws.com/static.slid.es/site/homepage/v1/homepage-video-editor.webm" data-background-color="#000000">
-						<div style="background-color: rgba(0, 0, 0, 0.9); color: #fff; padding: 20px;">
-							<h2>Video Backgrounds</h2>
-							<pre><code class="hljs" style="word-wrap: break-word;">&lt;section data-background-video="video.mp4,video.webm"&gt;</code></pre>
-						</div>
-					</section>
-					<section data-background="http://i.giphy.com/90F8aUepslB84.gif">
-						<h2>... and GIFs!</h2>
-					</section>
-				</section>
+<style type="text/css" id="sunburst-style">
+#sunburst #main {
+  float: left;
+  width: 750px;
+}
 
-				<section data-transition="slide" data-background="#4d7e65" data-background-transition="zoom">
-					<h2>Background Transitions</h2>
-					<p>
-						Different background transitions are available via the backgroundTransition option. This one's called "zoom".
-					</p>
-					<pre><code class="hljs">Reveal.configure({ backgroundTransition: 'zoom' })</code></pre>
-				</section>
+#sunburst #sidebar {
+  float: right;
+  width: 100px;
+}
 
-				<section data-transition="slide" data-background="#b5533c" data-background-transition="zoom">
-					<h2>Background Transitions</h2>
-					<p>
-						You can override background transitions per-slide.
-					</p>
-					<pre><code class="hljs" style="word-wrap: break-word;">&lt;section data-background-transition="zoom"&gt;</code></pre>
-				</section>
+#sunburst #sequence {
+  width: 600px;
+  height: 70px;
+}
 
-				<section>
-					<h2>Pretty Code</h2>
-					<pre><code class="hljs" data-trim contenteditable>
-function linkify( selector ) {
-  if( supports3DTransforms ) {
+#sunburst #legend {
+  padding: 10px 0 0 3px;
+}
 
-    var nodes = document.querySelectorAll( selector );
+#sunburst #sequence text, #sunburst #legend text {
+  font-weight: 600;
+  fill: #fff;
+}
 
-    for( var i = 0, len = nodes.length; i &lt; len; i++ ) {
-      var node = nodes[i];
+#sunburst #chart {
+  position: relative;
+}
 
-      if( !node.className ) {
-        node.className += ' roll';
+#sunburst #chart path {
+  stroke: #fff;
+}
+
+#sunburst #explanation {
+  position: absolute;
+  top: 260px;
+  left: 305px;
+  width: 140px;
+  text-align: center;
+  color: #666;
+  z-index: -1;
+}
+
+#sunburst #percentage {
+  font-size: 2.5em;
+}
+
+#sunburst {
+  font-family: 'Open Sans', sans-serif;
+  font-size: 12px;
+  font-weight: 400;
+  width: 960px;
+  height: 700px;
+  margin-top: 10px;
+}
+</style>
+
+<style id="transitions-style">
+#transitions text {
+  font: bold 48px monospace;
+}
+
+#transitions .enter {
+  fill: green;
+}
+
+#transitions .update {
+  fill: #333;
+}
+
+#transitions .exit {
+  fill: brown;
+}
+</style>
+
+        <!--[if lt IE 9]>
+        <script src="lib/js/html5shiv.js"></script>
+        <![endif]-->
+    </head>
+
+    <body>
+
+        <div class="reveal">
+
+            <!-- Any section element inside of this container is displayed as a slide -->
+            <div class="slides">
+                <section id="cover">
+                    <h2>
+                        <svg width="96" height="91">
+                            <clipPath id="clip">
+                              <path d="M0,0h7.75a45.5,45.5 0 1 1 0,91h-7.75v-20h7.75a25.5,25.5 0 1 0 0,-51h-7.75zm36.2510,0h32a27.75,27.75 0 0 1 21.331,45.5a27.75,27.75 0 0 1 -21.331,45.5h-32a53.6895,53.6895 0 0 0 18.7464,-20h13.2526a7.75,7.75 0 1 0 0,-15.5h-7.75a53.6895,53.6895 0 0 0 0,-20h7.75a7.75,7.75 0 1 0 0,-15.5h-13.2526a53.6895,53.6895 0 0 0 -18.7464,-20z"></path>
+                            </clipPath>
+                            <linearGradient id="gradient-1" gradientUnits="userSpaceOnUse" x1="7" y1="64" x2="50" y2="107">
+                              <stop offset="0" stop-color="#f9a03c"></stop>
+                              <stop offset="1" stop-color="#f7974e"></stop>
+                            </linearGradient>
+                            <linearGradient id="gradient-2" gradientUnits="userSpaceOnUse" x1="2" y1="-2" x2="87" y2="84">
+                              <stop offset="0" stop-color="#f26d58"></stop>
+                              <stop offset="1" stop-color="#f9a03c"></stop>
+                            </linearGradient>
+                            <linearGradient id="gradient-3" gradientUnits="userSpaceOnUse" x1="45" y1="-10" x2="108" y2="53">
+                              <stop offset="0" stop-color="#b84e51"></stop>
+                              <stop offset="1" stop-color="#f68e48"></stop>
+                            </linearGradient>
+                            <g clip-path="url(#clip)">
+                              <path d="M-100,-102m-27,0v300h300z" fill="url(#gradient-1)"></path>
+                              <path d="M-100,-102m27,0h300v300z" fill="url(#gradient-3)"></path>
+                              <path d="M-100,-102l300,300" fill="none" stroke="url(#gradient-2)" stroke-width="40"></path>
+                            </g>
+                          </svg>.js
+                      </h2>
+                    <h3>Data-Driven Documents</h3>
+                    <p><small>Presented by Georgi Krastev</small></p>
+                </section>
+
+                <section data-markdown id="definition">
+                    <script type="text/template">
+                        ## What is it?
+                        [D3.js](http://d3js.org/) is an open-source library for data visualization written in JavaScript
+                        and based on SVG (Scalable Vector Graphics).
+
+                        <span class="fragment">Disclaimer: Scalable as _"looks good on different screen sizes"_,
+                        not as _"supports millions of elements"_</span>
+                    </script>
+                </section>
+
+                <section>
+                <section id="motivation">
+                    <h2>Motivation</h2>
+                    <p>It's all about the data. But what does it mean?</p>
+                    <img src="/img/spreadsheet.png" style="height: 200px; margin-right: 20px;"/>
+                    <strong>vs</strong>
+                    <span id="motivation-plot"></span>
+                    <div class="footer">
+                        <small>
+                            Credits: <a href="https://gist.github.com/mbostock">mbostock</a>'s block
+                            <a href="http://bl.ocks.org/mbostock/4062085">#4062085</a>
+                        </small>
+                    </div>
+                </section>
+                <section class="script"></section>
+                </section>
+
+                <section data-markdown id="agenda">
+                    <script type="text/template">
+                        ## Outline for today
+                        1. Brief overview
+                        2. How to program
+                        3. Examples
+                        4. Discussion
+                    </script>
+                </section>
+
+                <section id="history">
+                    <h2>Some history</h2>
+                    <ul>
+                        <li>2009 - based on the experience of developing and utilizing
+                        <a href="http://prefuse.org/">Prefuse and Flare</a>, Prof. Jeff Heer, Ph.D. Mike Bostock,
+                        and M.S. Vadim Ogievetsky of the former <a href="http://vis.stanford.edu/">Stanford Visualization Group</a>
+                        (now the <a href="http://idl.cs.washington.edu/">Interactive Data Lab</a> at UW)
+                        created <a href="http://mbostock.github.io/protovis/">Protovis</a>,
+                        a JavaScript library to generate SVG graphics from data.</li>
+                        
+                        <li class="fragment">2011 - the development of Protovis was stopped to focus on a new project,
+                        D3.js that applied the lessons learned from Protovis.</li>
+                    </ul>
+                </section>
+
+                <section data-markdown id="resources">
+                    <script type="text/template">
+                        ## Where to start?
+                        * Documentation - check the [wiki](https://github.com/mbostock/d3/wiki)
+                        * Learn by example - Mike Bostock&#39;s [blocks](http://bl.ocks.org/)
+                        * 18,139 questions on [StackOverflow](http://stackoverflow.com/questions/tagged/d3.js) as of time of writing
+                        * A lot of [plugins](https://github.com/mbostock/d3/wiki/Plugins) available
+                        * [Reference paper](http://vis.stanford.edu/papers/d3) by Bostock, Ogievetsky and Heer
+                        * License: [BSD](http://opensource.org/licenses/BSD-3-Clause)
+                    </script>
+                </section>
+
+                <section data-markdown id="basics">
+                    <script type="text/template">
+                        ## First - the basics
+                        * SVG
+                        * Selections
+                        * Transitions
+                        * Scales
+                        * ... and then some
+                    </script>
+                </section>
+
+                <section id="svg">
+<h2>SVG (is XML)</h2>
+<pre><code class="hljs svg"><svg width="500" viewBox="0 0 1200 400"
+     xmlns="http://www.w3.org/2000/svg" version="1.1">
+  <title>Example arcs01 - arc commands in path data</title>
+  <desc>Picture of a pie chart with two pie wedges and
+        a picture of a line with arc blips</desc>
+  <rect x="1" y="1" width="1198" height="398"
+        fill="none" stroke="blue" stroke-width="1" />
+
+  <path d="M300,200 h-150 a150,150 0 1,0 150,-150 z"
+        fill="red" stroke="blue" stroke-width="5" />
+  <path d="M275,175 v-150 a150,150 0 0,0 -150,150 z"
+        fill="yellow" stroke="blue" stroke-width="5" />
+
+  <path d="M600,350 l 50,-25 
+           a25,25 -30 0,1 50,-25 l 50,-25 
+           a25,50 -30 0,1 50,-25 l 50,-25 
+           a25,75 -30 0,1 50,-25 l 50,-25 
+           a25,100 -30 0,1 50,-25 l 50,-25"
+        fill="none" stroke="red" stroke-width="5"  />
+</svg></code></pre>
+<svg width="500" viewBox="0 0 1200 400"
+     xmlns="http://www.w3.org/2000/svg" version="1.1">
+  <title>Example arcs01 - arc commands in path data</title>
+  <desc>Picture of a pie chart with two pie wedges and
+        a picture of a line with arc blips</desc>
+  <rect x="1" y="1" width="1198" height="398"
+        fill="none" stroke="blue" stroke-width="1" />
+
+  <path d="M300,200 h-150 a150,150 0 1,0 150,-150 z"
+        fill="red" stroke="blue" stroke-width="5" />
+  <path d="M275,175 v-150 a150,150 0 0,0 -150,150 z"
+        fill="yellow" stroke="blue" stroke-width="5" />
+
+  <path d="M600,350 l 50,-25 
+           a25,25 -30 0,1 50,-25 l 50,-25 
+           a25,50 -30 0,1 50,-25 l 50,-25 
+           a25,75 -30 0,1 50,-25 l 50,-25 
+           a25,100 -30 0,1 50,-25 l 50,-25"
+        fill="none" stroke="red" stroke-width="5"  />
+</svg>
+                </section>
+
+                <section data-markdown id="selections">
+                    <script type="text/template">
+                        ## d3.select
+                        DOM/SVG manipulation and data binding
+
+                        ```js
+                        d3.selectAll("p") // select all <p> elements
+                            .style("color", "lavender") // set style "color" to "lavender"
+                            .classed("squares")         // set "class" to "squares"
+                            .attr("x", 50);             // set attribute "x" to 50px
+                        
+                        // create SVG container
+                        var svg = d3.select("#hook").append("svg")
+                            .attr("width", 640).attr("height", 480)
+                            .style("fill", "#D0D0D0");
+                        
+                        // create SVG elements from data
+                        svg.selectAll("circle") // create virtual circle template
+                            .data(data)         // bind data
+                            .enter()            // for each row in the data ...
+                            .append("circle")   // ... set the attributes accordingly 
+                            .attr("id", function(d) { return d.name })
+                            .attr("fill",function(d) { return d.color });
+                        ```
+                    </script>
+                </section>
+
+                <section>
+                <section id="transitions">
+                    <h2>d3.transition</h2>
+                    <p>Animating style and data changes</p>
+                    <div id="transition-example"></div>
+
+                    <pre><code class="hljs js">d3.selectAll("p") // select all paragraphs
+  .transition("trans-color")   // transition with name "trans-color"
+    .delay(0)                  // starting righ after trigger
+    .duration(500)             // lasting 500ms
+    .ease("linear")            // with linear easing progression ...
+    .style("color", "pink");   // ... to color:pink</code></pre>
+                    <div class="footer">
+                        <small>
+                            Credits: <a href="https://gist.github.com/mbostock">mbostock</a>'s block
+                            <a href="http://bl.ocks.org/mbostock/3808234">#3808234</a>
+                        </small>
+                    </div>
+                </section>
+                <section class="script"></section>
+                </section>
+
+                <section id="scales">
+                    <h2>d3.scale</h2>
+                    <p>Mapping data points (domain) to style properties (range)</p>
+                    <ul>
+                        <li>Quantitative</li>
+                        <ul style="font-size: 0.7em;">
+                            <li><code>.linear().domain([20,80]).range([0,120]);</code></li>
+                            <li><code>.quantize().domain([0,10]).range([0,3,7]);</code></li>
+                            <li><code>.quantile().domain(dataset).range([0,100]);</code></li>
+                        </ul>
+                        <li>Ordinal</li>
+                        <ul style="font-size: 0.7em;">
+                            <li><code>.ordinal().domain(["R","G","B"]).rangeBands([0,60]);</code></li>
+                            <li id="color-scale"><code>.category20();</code></li>
+                        </ul>
+                    </ul>
+                </section>
+
+                <section data-markdown>
+                    <script type="text/template">
+                        ## ... And more
+                        * Support for `.json`, `.csv` and `.tsv` data
+                        * Force-directed graphs
+                        * Integration with various map APIs
+                        * Again, check the [wiki](https://github.com/mbostock/d3/wiki)
+                    </script>
+                </section>
+
+                <section>
+                <section>
+                    <h2>Click Stream Analysis</h2>
+                    <p>
+                        <a href="http://www.msnbc.com/">MSNBC.com</a> anonymous
+                        <a href="https://archive.ics.uci.edu/ml/datasets/MSNBC.com+Anonymous+Web+Data">web data set</a>
+                    </p>
+                    <table style="font-size: 0.7em;">
+                        <tbody>
+                            <tr>
+                                <td><strong>Data Set Characteristics</strong></td>
+                                <td>Sequential</td>
+                                <td><strong>Number of Instances</strong></td>
+                                <td>989818</td>
+                                <td><strong>Area</strong></td>
+                                <td>Computer</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Attribute Characteristics</strong></td>
+                                <td>Categorical</td>
+                                <td><strong>Number of Attributes</strong></td>
+                                <td>N/A</td>
+                                <td><strong>Date Donated</strong></td>
+                                <td>N/A</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Associated Tasks</strong></td>
+                                <td>N/A</td>
+                                <td><strong>Missing Values?</strong></td>
+                                <td>N/A</td>
+                                <td><strong>Number of Web Hits</strong></td>
+                                <td>41119</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <div class="footer">
+                        <small>
+                            Credits: <a href="http://bl.ocks.org/kerryrodden">kerryrodden</a>'s block
+                            <a href="http://bl.ocks.org/mbostock/7090426">#7090426</a>
+                        </small>
+                    </div>
+                </section>
+                <section id="sunburst">
+                    <div id="main">
+                      <div id="sequence"></div>
+                      <div id="chart">
+                        <div id="explanation" style="visibility: hidden;">
+                          <span id="percentage"></span><br/>
+                          of visits begin with this sequence of pages
+                        </div>
+                      </div>
+                    </div>
+                    <div id="sidebar">
+                      <input type="checkbox" id="togglelegend" checked="true"> Legend<br/>
+                      <div id="legend" style="visibility: hidden;"></div>
+                    </div>
+                </section>
+                <section class="script"></section>
+                <section data-markdown>
+                    <script type="text/template">
+                        ### Pre-processing with Flink
+                        ```scala
+object MSNBC extends App {
+
+  // set up the execution environment
+  val env = ExecutionEnvironment.getExecutionEnvironment
+  env.getConfig.disableSysoutLogging()
+
+  val categories = "frontpage news tech local opinion on-air misc weather msn-news health living" +
+    " business msn-sports sports summary bbs travel end" split ' '
+
+  val sequences = env.readTextFile(
+    "/media/georgy/work/Data/msnbc/msnbc990928.seq")
+
+  val clickStream = sequences.map { seq =>
+    s"${seq.trim} 18".split(' ')
+      .take(6).map(_.toInt - 1)
+      .map(categories).mkString(" ") -> 1
+  }.groupBy("_1").sum("_2").filter(_._2 > 1)
+
+  println(clickStream.count())
+  clickStream.writeAsCsv("/media/georgy/work/Data/msnbc/click-stream",
+    fieldDelimiter = ",", writeMode = WriteMode.OVERWRITE)
+
+  env.execute("MSNBC")
+}
+                        ```
+                    </script>
+                </section>
+                </section>
+
+                <section>
+                <section>
+                    <h2>World Population Migration</h2>
+                    <ul>
+                    <li>Bilateral flows between 196 countries estimated from sequential stock tables</li>
+                    <li>In the timespan 1990-2010 over 5 year periods</li>
+                    <li>Provided by the World Bank</li>
+                    <li>Reference: <a href="http://www.global-migration.info/">The Global Flow of People</a></li>
+                    </ul>
+                    <div class="footer">
+                        <small>
+                            Credits: <a href="https://gist.github.com/mbostock">mbostock</a>'s block
+                            <a href="http://bost.ocks.org/mike/uberdata/">uberdata</a>
+                        </small>
+                    </div>
+                </section>
+                <section id="migration"></section>
+                <section class="script"></section>
+                <section data-markdown>
+                    <script type="text/template">
+                        ### Pre-processing with Scala
+                        ```scala
+object Migration extends App {
+
+  val data = Source.fromFile("/home/georgy/work/edu/d3-reveal/data/migration.csv")
+    .getLines().toVector.tail.map { line =>
+    val record = line.replaceAll("\"", "").split(',')
+    val orig = record(1).toInt - 1
+    val dest = record(3).toInt - 1
+    val migrants = record.slice(10, 12).map(_.toDouble).sum
+    (orig, dest, migrants)
+  }.distinct.sorted
+
+  val total = data
+    .map(_._3).sum
+
+  val fractions = data
+    .map { case (orig, dest, migrants) =>
+      (orig, dest, migrants / total)
+    }.groupBy(_._1).values
+    .map(_.map(_._3).mkString("[", ",", "]"))
+    .mkString("[", ",", "]")
+
+  println(fractions)
+}
+                        ```
+                    </script>
+                </section>
+                </section>
+
+                <section>
+                    <section>
+                        <h2>Walmart Stores in the US</h2>
+                        <ul>
+                        <li>Geolocation data</li>
+                        <li>Example of a binning technique</li>
+                        <li>Size of the bins encodes number of stores</li>
+                        <li>Color shade encodes the average store age</li>
+                        </ul>
+                        <div class="footer">
+                            <small>
+                                Credits: <a href="https://gist.github.com/mbostock">mbostock</a>'s block
+                                <a href="http://bl.ocks.org/mbostock/4330486">#4330486</a>
+                            </small>
+                        </div>
+                    </section>
+                    <section id="map"></section>
+                    <section class="script"></section>
+                </section>
+
+                <section data-markdown id="the-good">
+                    <script type="text/template">
+                        ## Discussion
+                        ### The good
+                        * Interactive - unlike many other alternatives
+                        * The best documented library for visualization
+                        * Standard web frontend - SVG, CSS and JavaScript
+                        * A lot of examples available online
+                    </script>
+                </section>
+
+                <section data-markdown id="the-bad">
+                    <script type="text/template">
+                        ## Discussion
+                        ### The bad
+                        * Scalability issues - SVG is not hardware-accelerated
+                        * Cannot visualiza streams - update protocol missing
+                        * Frontend programming can be tricky sometimes
+                        * Integration with other data analysis tools still lacking
+                    </script>
+                </section>
+
+                <section data-markdown id="take-away">
+                    <script type="text/template">
+                        ## Take away
+                        * Take the time to pre-process your data! Seariously, do it.
+                        * Think out of the box - try out something other than plots and histograms.
+                        * Get your hands dirty - making the graphic work might reveal something more about the data.
+                    </script>
+                </section>
+
+                <section data-markdown id="end">
+                    <script type="text/template">
+                        ## The end
+                        #### Thank you!
+                        #### Any Questions?
+                    </script>
+                </section>
+
+            </div>
+
+        </div>
+
+        <script src="lib/js/head.min.js"></script>
+        <script src="js/reveal.js"></script>
+        <script src="//d3js.org/d3.v3.min.js"></script>
+        <script src="//d3js.org/queue.v1.min.js"></script>
+        <script src="//d3js.org/topojson.v1.min.js"></script>
+        <script src="js/hexbin.js"></script>
+
+        <script type="text/javascript">
+
+            // Full list of configuration options available at:
+            // https://github.com/hakimel/reveal.js#configuration
+            Reveal.initialize({
+                controls: true,
+                progress: true,
+                history: true,
+                center: true,
+
+                transition: 'slide', // none/fade/slide/convex/concave/zoom
+
+                // Optional reveal.js plugins
+                dependencies: [
+                    { src: 'lib/js/classList.js', condition: function() { return !document.body.classList; } },
+                    { src: 'plugin/markdown/marked.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+                    { src: 'plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+                    { src: 'plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } },
+                    { src: 'plugin/zoom-js/zoom.js', async: true },
+                    { src: 'plugin/notes/notes.js', async: true }
+                ]
+            });
+
+        </script>
+
+<script type="text/javascript">
+    function showCode(section) {
+        var code = d3.select('#' + section + ' + section.script')
+
+        code.append('pre')
+            .text('<script id="' + section + '"/>')
+        
+        code.append('pre').append('code')
+            .attr('class', 'hljs js')
+            .style('word-wrap', 'break-word')
+            .text(d3.select('#' + section + '-script').text())
+    }
+</script>
+
+<script type="text/javascript" id="motivation-script">
+(function() {
+var margin = {top: 20, right: 40, bottom: 30, left: 20},
+    width = 400 - margin.left - margin.right,
+    height = 200 - margin.top - margin.bottom,
+    barWidth = Math.floor(width / 19) - 1;
+
+var x = d3.scale.linear()
+    .range([barWidth / 2, width - barWidth / 2]);
+
+var y = d3.scale.linear()
+    .range([height, 0]);
+
+var yAxis = d3.svg.axis()
+    .scale(y)
+    .orient("right")
+    .tickSize(-width)
+    .tickFormat(function(d) { return Math.round(d / 1e6) + "M"; });
+
+// An SVG element with a bottom-right origin.
+var svg = d3.select("#motivation-plot").append("svg")
+    .attr("width", width + margin.left + margin.right)
+    .attr("height", height + margin.top + margin.bottom)
+    .append("g")
+    .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+// A sliding container to hold the bars by birthyear.
+var birthyears = svg.append("g")
+    .attr("class", "birthyears");
+
+d3.csv("data/population.csv", function(error, data) {
+
+  // Convert strings to numbers.
+  data.forEach(function(d) {
+    d.people = +d.people;
+    d.year = +d.year;
+    d.age = +d.age;
+  });
+
+  // Compute the extent of the data set in age and years.
+  var age1 = d3.max(data, function(d) { return d.age; }),
+      year0 = d3.min(data, function(d) { return d.year; }),
+      year1 = d3.max(data, function(d) { return d.year; }),
+      year = year1;
+
+  // Update the scale domains.
+  x.domain([year1 - age1, year1]);
+  y.domain([0, d3.max(data, function(d) { return d.people; })]);
+
+  // Produce a map from year and birthyear to [male, female].
+  data = d3.nest()
+      .key(function(d) { return d.year; })
+      .key(function(d) { return d.year - d.age; })
+      .rollup(function(v) { return v.map(function(d) { return d.people; }); })
+      .map(data);
+
+  // Add an axis to show the population values.
+  svg.append("g")
+      .attr("class", "y axis")
+      .attr("transform", "translate(" + width + ",0)")
+      .call(yAxis)
+      .selectAll("g")
+      .filter(function(value) { return !value; })
+      .classed("zero", true);
+
+  // Add labeled rects for each birthyear (so that no enter or exit is required).
+  var birthyear = birthyears.selectAll(".birthyear")
+      .data(d3.range(year0 - age1, year1 + 1, 5))
+      .enter().append("g")
+      .attr("class", "birthyear")
+      .attr("transform", function(birthyear) { return "translate(" + x(birthyear) + ",0)"; });
+
+  birthyear.selectAll("rect")
+      .data(function(birthyear) { return data[year][birthyear] || [0, 0]; })
+      .enter().append("rect")
+      .attr("x", -barWidth / 2)
+      .attr("width", barWidth)
+      .attr("y", y)
+      .attr("height", function(value) { return height - y(value); });
+
+  // Add labels to show birthyear.
+  birthyear.append("text")
+      .attr("y", height - 4)
+      .text(function(birthyear) { return birthyear; });
+
+  // Add labels to show age (separate; not animated).
+  svg.selectAll(".age")
+      .data(d3.range(0, age1 + 1, 5))
+      .enter().append("text")
+      .attr("class", "age")
+      .attr("x", function(age) { return x(year - age); })
+      .attr("y", height + 4)
+      .attr("dy", ".71em")
+      .text(function(age) { return age; });
+});
+})();
+</script>
+
+<script type="text/javascript" id="map-script">
+(function () {
+var width = 960,
+    height = 500,
+    parseDate = d3.time.format("%x").parse;
+
+var color = d3.time.scale()
+    .domain([new Date(1962, 0, 1), new Date(2006, 0, 1)])
+    .range(["black", "steelblue"])
+    .interpolate(d3.interpolateLab);
+
+var hexbin = d3.hexbin()
+    .size([width, height])
+    .radius(8);
+
+var radius = d3.scale.sqrt()
+    .domain([0, 12])
+    .range([0, 8]);
+
+var projection = d3.geo.albers()
+    .scale(1000)
+    .translate([width / 2, height / 2])
+    .precision(.1);
+
+var path = d3.geo.path()
+    .projection(projection);
+
+var svg = d3.select("#map").append("svg")
+    .attr("width", width)
+    .attr("height", height);
+
+queue()
+    .defer(d3.json, "data/us.json")
+    .defer(d3.tsv, "data/walmart.tsv")
+    .await(ready);
+
+function ready(error, us, walmarts) {
+  if (error) throw error;
+
+  walmarts.forEach(function(d) {
+    var p = projection(d);
+    d[0] = p[0], d[1] = p[1];
+    d.date = parseDate(d.date);
+  });
+
+  svg.append("path")
+      .datum(topojson.feature(us, us.objects.land))
+      .attr("class", "land")
+      .attr("d", path);
+
+  svg.append("path")
+      .datum(topojson.mesh(us, us.objects.states, function(a, b) { return a !== b; }))
+      .attr("class", "states")
+      .attr("d", path);
+
+  svg.append("g")
+      .attr("class", "hexagons")
+    .selectAll("path")
+      .data(hexbin(walmarts).sort(function(a, b) { return b.length - a.length; }))
+    .enter().append("path")
+      .attr("d", function(d) { return hexbin.hexagon(radius(d.length)); })
+      .attr("transform", function(d) { return "translate(" + d.x + "," + d.y + ")"; })
+      .style("fill", function(d) { return color(d3.median(d, function(d) { return +d.date; })); });
+}
+})();
+</script>
+
+<script type="text/javascript" id="sunburst-script">
+(function () {
+// Dimensions of sunburst.
+var width = 750;
+var height = 600;
+var radius = Math.min(width, height) / 2;
+
+// Breadcrumb dimensions: width, height, spacing, width of tip/tail.
+var b = {
+  w: 75, h: 30, s: 3, t: 10
+};
+
+// Mapping of step names to colors.
+var category20 = d3.scale.category20();
+var colors = "frontpage news tech local opinion on-air misc weather msn-news health living business msn-sports sports summary bbs travel end"
+    .split(' ').reduce(function(prev, curr, i) { prev[curr] = category20(i); return prev; }, {});
+
+// Total size of all segments; we set this later, after loading the data.
+var totalSize = 0; 
+
+var vis = d3.select("#chart").append("svg:svg")
+    .attr("width", width)
+    .attr("height", height)
+    .append("svg:g")
+    .attr("id", "container")
+    .attr("transform", "translate(" + width / 2 + "," + height / 2 + ")");
+
+var partition = d3.layout.partition()
+    .size([2 * Math.PI, radius * radius])
+    .value(function(d) { return d.size; });
+
+var arc = d3.svg.arc()
+    .startAngle(function(d) { return d.x; })
+    .endAngle(function(d) { return d.x + d.dx; })
+    .innerRadius(function(d) { return Math.sqrt(d.y); })
+    .outerRadius(function(d) { return Math.sqrt(d.y + d.dy); });
+
+// Use d3.text and d3.csv.parseRows so that we do not need to have a header
+// row, and can receive the csv as an array of arrays.
+d3.text("data/msnbc.csv", function(text) {
+  var csv = d3.csv.parseRows(text);
+  var json = buildHierarchy(csv);
+  createVisualization(json);
+});
+
+// Main function to draw and set up the visualization, once we have the data.
+function createVisualization(json) {
+
+  // Basic setup of page elements.
+  initializeBreadcrumbTrail();
+  drawLegend();
+  toggleLegend();
+  d3.select("#togglelegend").on("click", toggleLegend);
+
+  // Bounding circle underneath the sunburst, to make it easier to detect
+  // when the mouse leaves the parent g.
+  vis.append("svg:circle")
+      .attr("r", radius)
+      .style("opacity", 0);
+
+  // For efficiency, filter nodes to keep only those large enough to see.
+  var nodes = partition.nodes(json)
+      .filter(function(d) {
+      return (d.dx > 0.005); // 0.005 radians = 0.29 degrees
+      });
+
+  var path = vis.data([json]).selectAll("path")
+      .data(nodes)
+      .enter().append("svg:path")
+      .attr("display", function(d) { return d.depth ? null : "none"; })
+      .attr("d", arc)
+      .attr("fill-rule", "evenodd")
+      .style("fill", function(d) { return colors[d.name]; })
+      .style("opacity", 1)
+      .on("mouseover", mouseover);
+
+  // Add the mouseleave handler to the bounding circle.
+  d3.select("#container").on("mouseleave", mouseleave);
+
+  // Get total size of the tree = value of root node from partition.
+  totalSize = path.node().__data__.value;
+ };
+
+// Fade all but the current sequence, and show it in the breadcrumb trail.
+function mouseover(d) {
+
+  var percentage = (100 * d.value / totalSize).toPrecision(3);
+  var percentageString = percentage + "%";
+  if (percentage < 0.1) {
+    percentageString = "< 0.1%";
+  }
+
+  d3.select("#percentage")
+      .text(percentageString);
+
+  d3.select("#explanation")
+      .style("visibility", "");
+
+  var sequenceArray = getAncestors(d);
+  updateBreadcrumbs(sequenceArray, percentageString);
+
+  // Fade all the segments.
+  d3.selectAll("#sunburst path")
+      .style("opacity", 0.3);
+
+  // Then highlight only those that are an ancestor of the current segment.
+  vis.selectAll("path")
+      .filter(function(node) {
+                return (sequenceArray.indexOf(node) >= 0);
+              })
+      .style("opacity", 1);
+}
+
+// Restore everything to full opacity when moving off the visualization.
+function mouseleave(d) {
+
+  // Hide the breadcrumb trail
+  d3.select("#trail")
+      .style("visibility", "hidden");
+
+  // Deactivate all segments during transition.
+  d3.selectAll("#sunburst path").on("mouseover", null);
+
+  // Transition each segment to full opacity and then reactivate it.
+  d3.selectAll("#sunburst path")
+      .transition()
+      .duration(1000)
+      .style("opacity", 1)
+      .each("end", function() {
+              d3.select(this).on("mouseover", mouseover);
+            });
+
+  d3.select("#explanation")
+      .style("visibility", "hidden");
+}
+
+// Given a node in a partition layout, return an array of all of its ancestor
+// nodes, highest first, but excluding the root.
+function getAncestors(node) {
+  var path = [];
+  var current = node;
+  while (current.parent) {
+    path.unshift(current);
+    current = current.parent;
+  }
+  return path;
+}
+
+function initializeBreadcrumbTrail() {
+  // Add the svg area.
+  var trail = d3.select("#sequence").append("svg:svg")
+      .attr("width", width)
+      .attr("height", 50)
+      .attr("id", "trail");
+  // Add the label at the end, for the percentage.
+  trail.append("svg:text")
+    .attr("id", "endlabel")
+    .style("fill", "#000");
+}
+
+// Generate a string that describes the points of a breadcrumb polygon.
+function breadcrumbPoints(d, i) {
+  var points = [];
+  points.push("0,0");
+  points.push(b.w + ",0");
+  points.push(b.w + b.t + "," + (b.h / 2));
+  points.push(b.w + "," + b.h);
+  points.push("0," + b.h);
+  if (i > 0) { // Leftmost breadcrumb; don't include 6th vertex.
+    points.push(b.t + "," + (b.h / 2));
+  }
+  return points.join(" ");
+}
+
+// Update the breadcrumb trail to show the current sequence and percentage.
+function updateBreadcrumbs(nodeArray, percentageString) {
+
+  // Data join; key function combines name and depth (= position in sequence).
+  var g = d3.select("#trail")
+      .selectAll("#sunburst g")
+      .data(nodeArray, function(d) { return d.name + d.depth; });
+
+  // Add breadcrumb and label for entering nodes.
+  var entering = g.enter().append("svg:g");
+
+  entering.append("svg:polygon")
+      .attr("points", breadcrumbPoints)
+      .style("fill", function(d) { return colors[d.name]; });
+
+  entering.append("svg:text")
+      .attr("x", (b.w + b.t) / 2)
+      .attr("y", b.h / 2)
+      .attr("dy", "0.35em")
+      .attr("text-anchor", "middle")
+      .text(function(d) { return d.name; });
+
+  // Set position for entering and updating nodes.
+  g.attr("transform", function(d, i) {
+    return "translate(" + i * (b.w + b.s) + ", 0)";
+  });
+
+  // Remove exiting nodes.
+  g.exit().remove();
+
+  // Now move and update the percentage at the end.
+  d3.select("#trail").select("#endlabel")
+      .attr("x", (nodeArray.length + 0.5) * (b.w + b.s))
+      .attr("y", b.h / 2)
+      .attr("dy", "0.35em")
+      .attr("text-anchor", "middle")
+      .text(percentageString);
+
+  // Make the breadcrumb trail visible, if it's hidden.
+  d3.select("#trail")
+      .style("visibility", "");
+
+}
+
+function drawLegend() {
+
+  // Dimensions of legend item: width, height, spacing, radius of rounded rect.
+  var li = {
+    w: 75, h: 30, s: 3, r: 3
+  };
+
+  var legend = d3.select("#legend").append("svg:svg")
+      .attr("width", li.w)
+      .attr("height", d3.keys(colors).length * (li.h + li.s));
+
+  var g = legend.selectAll("#sunburst g")
+      .data(d3.entries(colors))
+      .enter().append("svg:g")
+      .attr("transform", function(d, i) {
+              return "translate(0," + i * (li.h + li.s) + ")";
+           });
+
+  g.append("svg:rect")
+      .attr("rx", li.r)
+      .attr("ry", li.r)
+      .attr("width", li.w)
+      .attr("height", li.h)
+      .style("fill", function(d) { return d.value; });
+
+  g.append("svg:text")
+      .attr("x", li.w / 2)
+      .attr("y", li.h / 2)
+      .attr("dy", "0.35em")
+      .attr("text-anchor", "middle")
+      .text(function(d) { return d.key; });
+}
+
+function toggleLegend() {
+  var legend = d3.select("#legend");
+  if (legend.style("visibility") == "hidden") {
+    legend.style("visibility", "");
+  } else {
+    legend.style("visibility", "hidden");
+  }
+}
+
+// Take a 2-column CSV and transform it into a hierarchical structure suitable
+// for a partition layout. The first column is a sequence of step names, from
+// root to leaf, separated by hyphens. The second column is a count of how 
+// often that sequence occurred.
+function buildHierarchy(csv) {
+  var root = {"name": "root", "children": []};
+  for (var i = 0; i < csv.length; i++) {
+    var sequence = csv[i][0];
+    var size = +csv[i][1];
+    if (isNaN(size)) { // e.g. if this is a header row
+      continue;
+    }
+    var parts = sequence.split(" ");
+    var currentNode = root;
+    for (var j = 0; j < parts.length; j++) {
+      var children = currentNode["children"];
+      var nodeName = parts[j];
+      var childNode;
+      if (j + 1 < parts.length) {
+   // Not yet at the end of the sequence; move down the tree.
+    var foundChild = false;
+    for (var k = 0; k < children.length; k++) {
+      if (children[k]["name"] == nodeName) {
+        childNode = children[k];
+        foundChild = true;
+        break;
+      }
+    }
+  // If we don't already have a child node for this branch, create it.
+    if (!foundChild) {
+      childNode = {"name": nodeName, "children": []};
+      children.push(childNode);
+    }
+    currentNode = childNode;
+      } else {
+    // Reached the end of the sequence; create a leaf node.
+    childNode = {"name": nodeName, "size": size};
+    children.push(childNode);
       }
     }
   }
+  return root;
+};
+})();
+</script>
+
+<script id="transitions-script">
+(function () {
+var alphabet = "abcdefghijklmnopqrstuvwxyz".split("");
+
+var width = 800,
+    height = 100;
+
+var svg = d3.select("#transition-example").append("svg")
+    .attr("width", width)
+    .attr("height", height)
+  .append("g")
+    .attr("transform", "translate(32," + (height / 2) + ")");
+
+function update(data) {
+
+  // DATA JOIN
+  // Join new data with old elements, if any.
+  var text = svg.selectAll("text")
+      .data(data, function(d) { return d; });
+
+  // UPDATE
+  // Update old elements as needed.
+  text.attr("class", "update")
+    .transition()
+      .duration(750)
+      .attr("x", function(d, i) { return i * 32; });
+
+  // ENTER
+  // Create new elements as needed.
+  text.enter().append("text")
+      .attr("class", "enter")
+      .attr("dy", ".35em")
+      .attr("y", -60)
+      .attr("x", function(d, i) { return i * 32; })
+      .style("fill-opacity", 1e-6)
+      .text(function(d) { return d; })
+    .transition()
+      .duration(750)
+      .attr("y", 0)
+      .style("fill-opacity", 1);
+
+  // EXIT
+  // Remove old elements as needed.
+  text.exit()
+      .attr("class", "exit")
+    .transition()
+      .duration(750)
+      .attr("y", 60)
+      .style("fill-opacity", 1e-6)
+      .remove();
 }
-					</code></pre>
-					<p>Code syntax highlighting courtesy of <a href="http://softwaremaniacs.org/soft/highlight/en/description/">highlight.js</a>.</p>
-				</section>
 
-				<section>
-					<h2>Marvelous List</h2>
-					<ul>
-						<li>No order here</li>
-						<li>Or here</li>
-						<li>Or here</li>
-						<li>Or here</li>
-					</ul>
-				</section>
+// The initial display.
+update(alphabet);
 
-				<section>
-					<h2>Fantastic Ordered List</h2>
-					<ol>
-						<li>One is smaller than...</li>
-						<li>Two is smaller than...</li>
-						<li>Three!</li>
-					</ol>
-				</section>
+// Grab a random sample of letters from the alphabet, in alphabetical order.
+setInterval(function() {
+  update(d3.shuffle(alphabet)
+      .slice(0, Math.floor(Math.random() * 26))
+      .sort());
+}, 1500);
+})();
+</script>
 
-				<section>
-					<h2>Tabular Tables</h2>
-					<table>
-						<thead>
-							<tr>
-								<th>Item</th>
-								<th>Value</th>
-								<th>Quantity</th>
-							</tr>
-						</thead>
-						<tbody>
-							<tr>
-								<td>Apples</td>
-								<td>$1</td>
-								<td>7</td>
-							</tr>
-							<tr>
-								<td>Lemonade</td>
-								<td>$2</td>
-								<td>18</td>
-							</tr>
-							<tr>
-								<td>Bread</td>
-								<td>$3</td>
-								<td>2</td>
-							</tr>
-						</tbody>
-					</table>
-				</section>
+<script type="text/javascript">
+(function () {
+var c20 = d3.scale.category20();
+var svg = d3.select("#color-scale")
+     .append("svg")
+     .attr("width", 400)
+     .attr("height", 20);
 
-				<section>
-					<h2>Clever Quotes</h2>
-					<p>
-						These guys come in two forms, inline: <q cite="http://searchservervirtualization.techtarget.com/definition/Our-Favorite-Technology-Quotations">
-						&ldquo;The nice thing about standards is that there are so many to choose from&rdquo;</q> and block:
-					</p>
-					<blockquote cite="http://searchservervirtualization.techtarget.com/definition/Our-Favorite-Technology-Quotations">
-						&ldquo;For years there has been a theory that millions of monkeys typing at random on millions of typewriters would
-						reproduce the entire works of Shakespeare. The Internet has proven this theory to be untrue.&rdquo;
-					</blockquote>
-				</section>
+svg.selectAll("circle")
+    .data( d3.range(20) )
+    .enter()
+    .append("circle")
+    .attr("r", 9 )
+    .attr("cx", d3.scale.linear().domain([-1, 20]).range([0, 400]) )
+    .attr("cy", 10)
+    .attr("fill", c20 );
+})();
+</script>
 
-				<section>
-					<h2>Intergalactic Interconnections</h2>
-					<p>
-						You can link between slides internally,
-						<a href="#/2/3">like this</a>.
-					</p>
-				</section>
+<script id="migration-script">
+(function () {
+var width = 720,
+    height = 720,
+    outerRadius = Math.min(width, height) / 2 - 10,
+    innerRadius = outerRadius - 24;
 
-				<section>
-					<h2>Speaker View</h2>
-					<p>There's a <a href="https://github.com/hakimel/reveal.js#speaker-notes">speaker view</a>. It includes a timer, preview of the upcoming slide as well as your speaker notes.</p>
-					<p>Press the <em>S</em> key to try it out.</p>
+var formatPercent = d3.format(".1%");
 
-					<aside class="notes">
-						Oh hey, these are some notes. They'll be hidden in your presentation, but you can see them if you open the speaker notes window (hit 's' on your keyboard).
-					</aside>
-				</section>
+var arc = d3.svg.arc()
+    .innerRadius(innerRadius)
+    .outerRadius(outerRadius);
 
-				<section>
-					<h2>Export to PDF</h2>
-					<p>Presentations can be <a href="https://github.com/hakimel/reveal.js#pdf-export">exported to PDF</a>, here's an example:</p>
-					<iframe src="https://www.slideshare.net/slideshow/embed_code/42840540" width="445" height="355" frameborder="0" marginwidth="0" marginheight="0" scrolling="no" style="border:3px solid #666; margin-bottom:5px; max-width: 100%;" allowfullscreen> </iframe>
-				</section>
+var layout = d3.layout.chord()
+    .padding(.04)
+    .sortSubgroups(d3.descending)
+    .sortChords(d3.ascending);
 
-				<section>
-					<h2>Global State</h2>
-					<p>
-						Set <code>data-state="something"</code> on a slide and <code>"something"</code>
-						will be added as a class to the document element when the slide is open. This lets you
-						apply broader style changes, like switching the page background.
-					</p>
-				</section>
+var path = d3.svg.chord()
+    .radius(innerRadius);
 
-				<section data-state="customevent">
-					<h2>State Events</h2>
-					<p>
-						Additionally custom events can be triggered on a per slide basis by binding to the <code>data-state</code> name.
-					</p>
-					<pre><code class="javascript" data-trim contenteditable style="font-size: 18px;">
-Reveal.addEventListener( 'customevent', function() {
-	console.log( '"customevent" has fired' );
-} );
-					</code></pre>
-				</section>
+var svg = d3.select("#migration").append("svg")
+    .attr("width", width)
+    .attr("height", height)
+  .append("g")
+    .attr("id", "circle")
+    .attr("transform", "translate(" + width / 2 + "," + height / 2 + ")");
 
-				<section>
-					<h2>Take a Moment</h2>
-					<p>
-						Press B or . on your keyboard to pause the presentation. This is helpful when you're on stage and want to take distracting slides off the screen.
-					</p>
-				</section>
+svg.append("circle")
+    .attr("r", outerRadius);
 
-				<section>
-					<h2>Much more</h2>
-					<ul>
-						<li>Right-to-left support</li>
-						<li><a href="https://github.com/hakimel/reveal.js#api">Extensive JavaScript API</a></li>
-						<li><a href="https://github.com/hakimel/reveal.js#auto-sliding">Auto-progression</a></li>
-						<li><a href="https://github.com/hakimel/reveal.js#parallax-background">Parallax backgrounds</a></li>
-						<li><a href="https://github.com/hakimel/reveal.js#keyboard-bindings">Custom keyboard bindings</a></li>
-					</ul>
-				</section>
+queue()
+    .defer(d3.csv, "data/regions.csv")
+    .defer(d3.json, "data/migration.json")
+    .await(ready);
 
-				<section style="text-align: left;">
-					<h1>THE END</h1>
-					<p>
-						- <a href="http://slides.com">Try the online editor</a> <br>
-						- <a href="https://github.com/hakimel/reveal.js">Source code &amp; documentation</a>
-					</p>
-				</section>
+function ready(error, cities, matrix) {
+  if (error) throw error;
 
-			</div>
+  // Compute the chord layout.
+  layout.matrix(matrix);
 
-		</div>
+  // Add a group per neighborhood.
+  var group = svg.selectAll(".group")
+      .data(layout.groups)
+    .enter().append("g")
+      .attr("class", "group")
+      .on("mouseover", mouseover);
 
-		<script src="lib/js/head.min.js"></script>
-		<script src="js/reveal.js"></script>
+  // Add a mouseover title.
+  group.append("title").text(function(d, i) {
+    return cities[i].name + ": " + formatPercent(d.value) + " of origins";
+  });
 
-		<script>
+  // Add the group arc.
+  var groupPath = group.append("path")
+      .attr("id", function(d, i) { return "group" + i; })
+      .attr("d", arc)
+      .style("fill", function(d, i) { return cities[i].color; });
 
-			// Full list of configuration options available at:
-			// https://github.com/hakimel/reveal.js#configuration
-			Reveal.initialize({
-				controls: true,
-				progress: true,
-				history: true,
-				center: true,
+  // Add a text label.
+  var groupText = group.append("text")
+      .attr("x", 6)
+      .attr("dy", 15);
 
-				transition: 'slide', // none/fade/slide/convex/concave/zoom
+  groupText.append("textPath")
+      .attr("xlink:href", function(d, i) { return "#group" + i; })
+      .text(function(d, i) { return cities[i].name; });
 
-				// Optional reveal.js plugins
-				dependencies: [
-					{ src: 'lib/js/classList.js', condition: function() { return !document.body.classList; } },
-					{ src: 'plugin/markdown/marked.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
-					{ src: 'plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
-					{ src: 'plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } },
-					{ src: 'plugin/zoom-js/zoom.js', async: true },
-					{ src: 'plugin/notes/notes.js', async: true }
-				]
-			});
+  // Remove the labels that don't fit. :(
+  groupText.filter(function(d, i) { return groupPath[0][i].getTotalLength() / 2 - 16 < this.getComputedTextLength(); })
+      .remove();
 
-		</script>
+  // Add the chords.
+  var chord = svg.selectAll(".chord")
+      .data(layout.chords)
+    .enter().append("path")
+      .attr("class", "chord")
+      .style("fill", function(d) { return cities[d.source.index].color; })
+      .attr("d", path);
 
-	</body>
+  // Add an elaborate mouseover title for each chord.
+  chord.append("title").text(function(d) {
+    return cities[d.source.index].name
+        + " → " + cities[d.target.index].name
+        + ": " + formatPercent(d.source.value)
+        + "\n" + cities[d.target.index].name
+        + " → " + cities[d.source.index].name
+        + ": " + formatPercent(d.target.value);
+  });
+
+  function mouseover(d, i) {
+    chord.classed("fade", function(p) {
+      return p.source.index != i
+          && p.target.index != i;
+    });
+  }
+}
+})();
+</script>
+
+        <script type="text/javascript">
+            showCode('motivation')
+            showCode('map')
+            showCode('sunburst')
+            showCode('transitions')
+            showCode('migration')
+        </script>
+
+    </body>
 </html>
