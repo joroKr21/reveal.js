@@ -632,6 +632,23 @@ object Migration extends App {
                     </script>
                 </section>
 
+                <section data-markdown>
+                    <script type="text/template">
+                        ## How to integrate with Jupyter
+                        ```html
+                        %%html
+                        <script src="//d3js.org/d3.v3.min.js"/>
+                        <h3 id="test">Test</h3>
+                        ```
+                        ### Test
+                        ```javascript
+                        %%javascript
+                        d3.select("#test").text("Successfully loaded D3 version " + d3.version);
+                        ```
+                        ### Successfully loaded D3 version 3.5.14
+                    </script>
+                </section>
+
             </div>
 
         </div>
