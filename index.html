@@ -8,16 +8,1181 @@
 
 		<link rel="stylesheet" href="dist/reset.css">
 		<link rel="stylesheet" href="dist/reveal.css">
-		<link rel="stylesheet" href="dist/theme/black.css" id="theme">
+		<link rel="stylesheet" href="dist/theme/solarized.css" id="theme">
 
 		<!-- Theme used for syntax highlighted code -->
-		<link rel="stylesheet" href="plugin/highlight/monokai.css" id="highlight-theme">
+		<link rel="stylesheet" href="plugin/highlight/zenburn.css" id="highlight-theme">
+		<style>
+			.container { display: flex; }
+			.column { flex: 1; padding: 2px; }
+		</style>
 	</head>
 	<body>
 		<div class="reveal">
 			<div class="slides">
-				<section>Slide 1</section>
-				<section>Slide 2</section>
+				<section data-markdown>
+					<textarea data-template>
+						#### Georgi Krastev
+						## Algebraic Scala from 0 to 100
+						![](img/maths.gif) <!-- .element: class="fragment" -->
+					</textarea>
+				</section>
+				<section data-markdown>
+					<textarea data-template>
+						### Disclaimers
+						
+						* There is math in this talk, but it's not rigorous
+						<!-- .element: class="fragment" -->
+
+						* There is code in this talk, but it might not compile
+						<!-- .element: class="fragment" -->
+
+						* There are memes in this talk, but they are old
+						<!-- .element: class="fragment" -->
+
+						* There is a lot to cover and we might not make it
+						<!-- .element: class="fragment" -->
+					</textarea>
+				</section>
+				<section>
+					<h3>Agenda</h3>
+					<div class="r-stack">
+						<ul>
+							<li class="fragment">Algebraic Data Types</li>
+							<li class="fragment">Domain Modeling</li>
+							<li class="fragment">Isomorphisms</li>
+							<li class="fragment">Type Classes</li>
+							<li class="fragment">Type Class Derivation</li>
+						</ul>
+						<img src="img/stonks.png" class="fragment"/>						
+					</div>
+				</section>
+				<section>
+					<h3>Code</h3>
+					<div class="r-stack">
+						<img src="img/how-it-started.jpg" class="fragment"/>						
+						<p class="fragment" style="color: firebrick; font-size: 2em; font-weight: bold; text-shadow: 0.05em 0.05em black;">
+							Scala 2 | Scala 3
+						</p>
+					</div>
+				</section>
+				<section data-markdown>
+					<textarea data-template>
+						### Algebraic Data Types (ADTs)
+						
+						An algebraic data type is a <u>structured data</u> type<br/> that's formed by <u>composing</u> other <u>types</u>.
+						<!-- .element: class="fragment" -->
+
+						Or, even shorter, it’s a type made of other types.<br/> That’s it. Or is it?
+						<!-- .element: class="fragment" --> 
+					</textarea>
+				</section>
+				<section data-markdown>
+					<textarea data-template>
+						### Types (set theory)
+
+						A type is a <u>label</u> for a <u>set</u> of possible <u>values</u>: `val x: T`
+						<!-- .element: class="fragment" -->
+
+						Since it's a set, for a type `T` we can define its size `|T|`
+						<!-- .element: class="fragment" -->
+
+						| `T`       | `\|T\|`        | Values                         |
+						|-----------|----------------|--------------------------------|
+						| `Boolean` | 2              | true, false                    |
+						| `Int`     | 2<sup>32</sup> | 0, 1, 42, -100, ...            |
+						| `String`  | ∞              | "a", "aa", "aab", "scala", ... |
+						| `Unit`    | 1              | `()`                           |
+						| `Nothing` | 0              |                                |
+						<!-- .element: class="fragment" -->
+					</textarea>
+				</section>
+				<section data-markdown>
+					<textarea data-template>
+						### Structured Data
+						
+						Computer data is information<br/> processed or stored by a computer.
+						<!-- .element: class="fragment" -->
+
+						* ~Object~ **Data**: it doesn't encapsulate functionality
+						<!-- .element: class="fragment" -->
+						
+						* ~State~ **Immutable**: it can be passed around and transformed but not modified
+						<!-- .element: class="fragment" -->
+
+						* **Structured**: it can be constructed and deconstructed
+						<!-- .element: class="fragment" -->
+					</textarea>
+				</section>
+				<section>
+					<h3>Structured Data</h3>
+					<div class="r-stack">
+						<pre class="scala"><code data-trim>
+							// data type
+							case class Doge(name: String, age: Int)
+							// constuction	
+							val kabosu = Doge("Kabosu", 7)
+							// deconstruction
+							kabosu match {
+							  case Doge(name, age) =>
+							    println(s"$name is $age, wow!")
+							    //> Kabosu is 7, wow!
+							}
+						</code></pre>
+						<img src="img/doge.png" class="fragment" />
+					</div>
+				</section>
+				<section data-markdown>
+					<textarea data-template>
+						### Composition
+						
+						Data types form an <u>algebra</u> - they can be composed and their composition follows <u>laws</u>.
+						More on that later.
+						<!-- .element: class="fragment" -->
+
+						* Aggregation via **product types**: `$ A \times B $`
+						<!-- .element: class="fragment" -->
+
+						* Choice via **sum types**: `$ A + B $`
+						<!-- .element: class="fragment" -->
+					</textarea>
+				</section>
+				<section tagcloud>
+					Product Types
+					Records
+					Data Frames
+					Tuples
+					Case Classes
+					Data Classes
+					Structs
+					JSON Objects
+					Proto Messages
+					Cartesian Products
+				 </section>
+				<section data-markdown>
+					<textarea data-template>
+						### Product Types
+						Really popular - most languages have them
+						
+						`$ (a, b) \in A \times B $`
+						<!-- .element: class="fragment" -->
+
+						`$ Boolean \times Boolean $`
+						<!-- .element: class="fragment" -->
+
+						`$ \overbrace{(true, true), (true, false), (false, true), (false, false)} $`
+						<!-- .element: class="fragment" -->
+
+						`$ |Boolean \times Boolean| = 4 $`
+						<!-- .element: class="fragment" -->
+
+						`$ |A \times B| = |A| \times |B| $`
+						<!-- .element: class="fragment" -->
+					</textarea>
+				</section>
+				<section data-markdown>
+					<textarea data-template>
+						### Product Types
+						
+						`("Alexanderufer", 5, 'A', Berlin)` `$ \in String \times Int \times Char \times City $`
+						<!-- .element: class="fragment" -->
+
+						```scala
+						// tuples
+						val address: (String, Int, Char, City) =
+						  ("Alexanderufer", 5, 'A', Berlin)
+						// case classes
+						case class Address(
+						  street: String,
+						  number: Int,
+						  entry: Char,
+						  city: City
+						)
+
+						val office = Address("Alexanderufer", 5, 'A', Berlin)
+						```
+						<!-- .element: class="fragment" -->
+					</textarea>
+				</section>
+				<section tagcloud>
+					Sum Types
+					Coproduct Types
+					Disjoint Unions
+					Variant Types
+					Oneof Fields
+					Sealed Traits
+					Enums
+					Tagged Unions
+				 </section>
+				 <section data-markdown>
+					<textarea data-template>
+						### Sum Types
+						Not so popular - mostly FP languages have them
+						
+						`$ \mathcal{L}(a) \in A + B; \mathcal{R}(b) \in A + B $`
+						<!-- .element: class="fragment" -->
+
+						`$ Vertical = \{ Up, Down \} $`
+						`$ Horizontal = \{ North, East, South, West \} $`
+						<!-- .element: class="fragment" -->
+
+						`$ Vertical + Horizontal $`
+						<!-- .element: class="fragment" -->
+
+						`$ \overbrace{\mathcal{L}(Up), \mathcal{L}(Down), \mathcal{R}(North), \mathcal{R}(East), \mathcal{R}(South), \mathcal{R}(West)} $`
+						<!-- .element: class="fragment" -->
+
+						`$ |Vertical + Horizontal| = 6 $`
+						<!-- .element: class="fragment" -->
+
+						`$ |A + B| = |A| + |B| $`
+						<!-- .element: class="fragment" -->
+					</textarea>
+				</section>
+				<section data-markdown>
+					<textarea data-template>
+						### Sum Types
+						
+						`$ \mathcal{L}\mathcal{L}(42^{\circ}) \in Radian + Vertical + Horizontal $`
+						<!-- .element: class="fragment" -->
+
+						```scala
+						// Either
+						val degrees: Double Either Vertical Either Horizontal =
+						  Left(Left(42.0))
+						// sealed traits
+						sealed trait Horizontal
+						object North extends Horizontal
+						object East  extends Horizontal
+						object South extends Horizontal
+						object West  extends Horizontal
+
+						val direction: Horizontal = South
+						```
+						<!-- .element: class="fragment" -->
+					</textarea>
+				</section>
+				<section>
+					<h3>Aside - Union and Intersection Types</h3>
+					<p>Not to be confused with sum and product types:</p>
+					<div class="r-stack">
+					<div class="container">
+						<div class="column">
+							<img src="img/union-intersection.png" class="fragment"/>
+							<span class="fragment">\[ |A \cup B| \color{firebrick}{\le} |A| + |B| \]</span>
+							<span class="fragment">\[ |A \cap B| \color{firebrick}{\le} min(|A|, |B|) \]</span>
+						</div>
+						<pre class="column fragment scala"><code data-trim>
+							val bird: Mammal | LaysEggs =
+							  Goose("honk")
+
+							val bigCat: Mammal | LaysEggs =
+							  Lion("roar")
+
+							val wat: Mammal & LaysEggs =
+							  Platypus("???")
+						</code></pre>
+					</div>
+					<img src="img/platypus.png" class="fragment"/>
+					</div>
+				</section>
+				<section data-markdown>
+					<textarea data-template>
+						### Algebraic Data Types
+						Sum of Products - canonical data representation
+						
+						Analogue - Disjunctive Normal Form:
+						`$ Email \vee Phone \vee (Street \wedge Number \wedge City) $`
+						<!-- .element: class="fragment" -->
+
+						We can encode any data type with these constructs:
+						`$ Contact = Email + Phone + Street \times Number \times City $`
+						<!-- .element: class="fragment" -->
+					</textarea>
+				</section>
+				<section>
+					<h3>ADTs in Scala</h3>
+					<div class="container">
+						<pre class="column fragment scala"><code data-trim>
+							// Scala 2
+							sealed trait Contact
+							object Contact {
+							  case class Email(
+							    address: String
+							  ) extends Contact
+							  case class Phone(
+							    number: String
+							  ) extends Contact
+							  case class Address(
+							    street: String,
+							    number: Int,
+							    city: City
+							  ) extends Contact
+							}
+						</code></pre>
+						<pre class="column fragment scala"><code data-trim>
+							// Scala 3
+							enum Contact:
+							  case Email(address: String)
+							  case Phone(number: Int)
+							  case Address(
+							    street: String,
+							    number: Int,
+							    city: City
+							  )
+						</code></pre>
+					</div>
+				</section>
+				<section data-markdown>
+					<textarea data-template>
+						### ADTs in Scala
+						```scala 
+						def notify(contact: Contact, message: Message) =
+						  contact match
+							case Contact.Email(address) => sendEmail(address, message)
+							case Contact.Phone(number)  => sendSMS(number, message)
+							// forgot to handle Address => compiler error
+						```
+					</textarea>
+				</section>
+				<section data-markdown>
+					<textarea data-template>
+						### Domain Modeling with ADTs
+						Sum of Products - canonical data representation
+						
+						* Apply Domain Driven Design (DDD)
+						<!-- .element: class="fragment" -->
+						* Use the (ubiquitous) language of the domain
+						<!-- .element: class="fragment" -->
+						* Make illegal data not representable
+						<!-- .element: class="fragment" -->
+						* Derive functionality for free (scrap your boilerplate)
+						<!-- .element: class="fragment" -->
+					</textarea>
+				</section>
+				<section data-markdown>
+					<textarea data-template>
+						### Apply DDD
+						```scala
+						package poker
+						
+						enum Suit:
+						  case Clubs, Diamonds, Hearts, Spades
+						enum Rank:
+						  case Two, Three, Four, Five, Six, Seven, Eight, Nine, Ten
+						  case Jack, Queen, Kind, Ace
+						case class Card(rank: Rank, suit: Suit)
+						opaque type Hand = List[Card] // use smart constructors
+						opaque type Deck = List[Card] // use smart constructors
+						case class Player(name: String, hand: Hand)
+						case class Game(deck: Deck, players: List[Player])
+
+						def deal(deck: Deck): Option[(Card, Deck)] = ???
+						def pick(card: Card, hand: Hand): Option[Hand] = ???
+						```
+					</textarea>
+				</section>
+				<section data-markdown>
+					<textarea data-template>
+						### Use Ubiquitous Language
+						```scala
+						package payment
+						
+						enum PaymentMethod:
+						  case Cash, ApplePay, GooglePay
+						  case Cheque(number: ChequeNumber)
+						  case CreditCard(cardType: CardType, number: CardNumber)
+						  case PayPal(email: Email)
+
+						enum CardType:
+						  case Visa, MasterCard
+
+						opaque type ChequeNumber = String // validated
+						opaque type CardNumber   = String // validated
+						opaque type Email        = String // validated
+						```
+					</textarea>
+				</section>
+				<section data-markdown>
+					<textarea data-template>
+						### Make Illegal Data not Representable
+						```scala
+						package payment
+
+						object ChequeNumber:
+						  def apply(number: String): Either[Invalid, ChequeNumber] = ???
+						object CardNumber:
+						  def apply(number: String): Either[Invalid, ChequeNumber] = ???
+						  
+						enum Email:
+						  case Verified(address: EmailAddress)
+						  case Unverified(address: String)
+
+						opaque type EmailAddress = String
+						def validateEmail(
+						  address: Email.Unverified
+						): IO[Either[Invalid, Email.Verified]] = ???
+						```
+					</textarea>
+				</section>
+				<section data-markdown>
+					<textarea data-template>
+						### Derive Functionality for Free
+						More on that later. For now some quick mafs.
+						![](img/smart.gif) <!-- .element: class="fragment" -->
+					</textarea>
+				</section>
+				<section>
+					<h3>Generic Types</h3>
+					<div class="container">
+						<pre class="column fragment scala"><code data-trim>
+							// Scala 2
+							sealed trait Option[+T]
+							object Option {
+							  case class Some[+T](value: T)
+							    extends Option[T]
+							  case object None
+							    extends Option[Nothing]
+							}
+						</code></pre>
+						<pre class="column fragment scala"><code data-trim>
+							// Scala 3
+							enum Option[+T]:
+							  case Some(value: T)
+							  case None
+						</code></pre>
+					</div>
+					<span class="fragment">\[ Option(x) = x + 1 \]</span>
+				</section>
+				<section>
+					<h3>Recursive Types</h3>
+					<div class="container">
+						<pre class="column fragment scala"><code data-trim>
+							// Scala 2
+							sealed trait List[+T]
+							object List {
+							  case class Cons[+T](
+							    head: T,
+							    tail: List[T]
+							  ) extends List[T]
+							  case object Nil
+							    extends List[Nothing]
+							}
+						</code></pre>
+						<pre class="column fragment scala"><code data-trim>
+							// Scala 3
+							enum List[+T]:
+							  case Cons(
+							    head: T,
+							    tail: List[T]
+							  )
+							  case Nil
+						</code></pre>
+					</div>
+					<span class="fragment">\[ \begin{aligned}
+						List(x) &amp; = 1 + x List(x) \\
+						&amp; = 1 + x (1 + x List(x)) \\
+						&amp; = 1 + x + x^2 List(x) \\
+						&amp; = 1 + x + x^2 + x^3 + x^4 + \ldots
+					\end{aligned} \]</span>
+				</section>
+				<section>
+					<h3>Recursive Types</h3>
+					<div class="container">
+						<pre class="column fragment scala"><code data-trim>
+							// Scala 2
+							sealed trait BTree[+T]
+							object BTree {
+							  case class Leaf[+T](value: T)
+							    extends BTree[T]
+							  case class Branch[+T](
+							    left: BTree[T],
+							    right: BTree[T]
+							  ) extends BTree[T]
+							}
+						</code></pre>
+						<pre class="column fragment scala"><code data-trim>
+							// Scala 3
+							enum BTree[+T]:
+							  case Leaf(value: T)
+							  case Branch(
+							    left: BTree[T],
+							    right: BTree[T]
+							  )
+						</code></pre>
+					</div>
+					<span class="fragment">\[ \begin{aligned}
+						BTree(x) &amp; = x + BTree(x)^2 \\
+						&amp; = x + (x + BTree(x)^2)^2 \\
+						&amp; = x + x^2 + 2x BTree(x)^2 + BTree(x)^4 \\
+						(Catalan) &amp; = x + x^2 + 2x^3 + 5x^4 + 14x^5 + \ldots
+					\end{aligned} \]</span>
+				</section>
+				<section data-markdown>
+					<textarea data-template>
+						### Generalized ADTs (GADTs)
+						```scala
+						enum Expr[+T]:
+						  case Num(const: Int) extends Expr[Int]
+						  case Bol(const: Boolean) extends Expr[Boolean]
+						  case Var[+T](name: String) extends Expr[T]
+						  case Add(a: Expr[Int], b: Expr[Int]) extends Expr[Int]
+						  case Mul(a: Expr[Int], b: Expr[Int]) extends Expr[Int]
+						  case Ifn(cond: Expr[Boolean], a: Expr[T], b: Expr[T])
+						  case Sum(xs: Expr[Int]*) extends Expr[Int]
+						```
+						Variants can fix the type parameter. <!-- .element: class="fragment" -->
+					</textarea>
+				</section>
+				<section data-markdown>
+					<textarea data-template>
+						### Lazyness
+						```scala
+						trait Lazy[+T]:
+						  def value: T
+
+						object Lazy:
+						  def apply[T](x: => T): Lazy[T] = new:
+							lazy val value = x
+						```
+						![](img/sloth.gif) <!-- .element: class="fragment" -->
+					</textarea>
+				</section>
+				<section data-markdown>
+					<textarea data-template>
+						### Cycles
+						```scala
+						enum Stream[+A]:
+						  case Nil
+						  case Cons(head: A, tail: Lazy[Stream[A]])
+						  def drop(n: Int): Stream[A] = ???
+						  def map[B](f: A => B): Stream[B] = ???
+						  def zip[B](that: Stream[B]): Stream[(A, B)] = ???
+
+						object Stream:
+						  def cons[A](head: A, tail: => Stream[A]): Stream[A] =
+							Cons(head, Lazy(tail))
+
+						lazy val fs: Stream[Long] = // Fibonacci stream (infinite)
+						  Stream.cons(0, Stream.cons(1, fs.zip(fs.drop(1)).map(_ + _)))
+						```
+						Sometimes referred to as "tying the knot". <!-- .element: class="fragment" -->
+					</textarea>
+				</section>
+				<section>
+					<h3>Graphs</h3>
+					<span class="fragment">\[ G = (V, E); E \subseteq V \times V \]</span>
+					<span class="fragment">\[ \begin{aligned}
+						empty &amp; = (\emptyset, \emptyset) \\
+						vertex(x) &amp; = (\{ x \}, \emptyset) \\
+						overlay((V_1, E_1), (V_2, E_2)) &amp; = (V_1 \cup V_2, E_1 \cup E_2) \\
+						connect((V_1, E_1), (V_2, E_2)) &amp; = (V_1 \cup V_2, E_1 \cup E_2 \cup V_1 \times V_2)
+					\end{aligned} \]</span>
+				</section>
+				<section data-markdown>
+					<textarea data-template>
+						### Graphs
+						```scala
+						enum Graph[+A]:
+						  case Empty
+						  case Vertex(value: A)
+						  case Overlay(g: Graph[A], h: Graph[A])
+						  case Connect(g: Graph[A], h: Graph[A])
+						```
+						This encoding is enough to represent many graphs:<br/>
+						directed, undirected, transitively closed, graph families,<br/>
+						... (see the references)
+						<!-- .element: class="fragment" -->
+					</textarea>
+				</section>
+				<section>
+					<div class="r-stack">
+						<div>
+							<h3>Isomorphisms</h3>
+							<p>\[ A \cong B \]</p>
+							<ul>
+								<li class="fragment">A structure-preserving mapping between two types that can be reversed by an inverse mapping.</li>
+								<li class="fragment">We can convert back and forth between two types without losing information.</li>
+								<li class="fragment">Example: $ Long \cong (Int, Int) $</li>
+							</ul>
+						</div>
+						<img src="img/super-sayan.png" class="fragment"/>						
+					</div>
+				</section>
+				<section>
+					<h3>Product Associativity</h3>
+					<span>\[ (x \times y) \times z = x \times (y \times z) = x \times y \times z \]</span>
+					<span class="fragment">\[ \begin{aligned}
+						(A, B, C, D, E) &amp; \cong ((A, B), (C, D, E)) \\
+						&amp; \cong (A, (B, C), (D, E)) \\
+						&amp; \cong (((((A, B), C), D), E)
+					\end{aligned} \]</span>
+					<span class="fragment">It doesn't matter how we arrange the parentheses!</span>
+				</section>
+				<section>
+					<h3>Product Identity</h3>
+					<span>\[ x \times 1 = 1 \times x = x \]</span>
+					<span class="fragment">\[ \begin{aligned}
+						(A, B) &amp; \cong (A, B, ()) \\
+						&amp; \cong (A, (), B) \\
+						&amp; \cong ((), A, (), B, ())
+					\end{aligned} \]</span>
+					<span class="fragment">It doesn't matter if we multiply by 1 (aka. Unit)!</span>
+				</section>
+				<section>
+					<h3>Product Commutativity</h3>
+					<span>\[ x \times y = y \times x \]</span>
+					<span class="fragment">\[ \begin{aligned}
+						(A, B, C, D, E) &amp; \cong (B, C, A, E, D) \\
+					 	&amp; \cong (C, A, D, E, B) \\
+						&amp; \cong (E, D, C, B, A)
+					\end{aligned} \]</span>
+					<p class="fragment">It doesn't matter how we order the parts!</p>
+					<p class="fragment">Problem - we must remember the mapping:</p>
+					<span class="fragment">\[ (Int, Int, String) \cong (Int, String, Int) \]</span>
+				</section>
+				<section data-markdown>
+					<textarea data-template>
+						### Product Isomorphisms
+						```scala
+						case class Address(street: String, number: Int, city: City)
+						// <=> (String, Int, City)
+						// <=> (String, (Int, City))
+						// <=> (String, (Int, (City, Unit)))
+						```
+						The last one is particularly interesting (it's _inductive_).
+						<!-- .element: class="fragment" -->
+					</textarea>
+				</section>
+				<section>
+					<h3>Inductive Products</h3>
+					<div class="container">
+						<pre class="column fragment scala"><code data-trim>
+							// Scala 2 - shapeless
+							sealed trait HList
+							case class ::[+H, +T <: HList](
+							  head: H,
+							  tail: T
+							) extends HList
+							sealed trait HNil extends HList
+							case object HNil extends HNil
+
+							val x: Int :: Char :: Double :: HNil =
+							  42 :: 'x' :: 3.14 :: HNil
+						</code></pre>
+						<pre class="column fragment scala"><code data-trim>
+							// Scala 3 - native tuples!
+							val x: (Int, Char, Double) =
+							  (42, 'x', 3.14)
+							
+							x: Int *: (Char, Double)
+							x: Int *: Char *: Tuple1[Double]
+							x: Int *: Char *: Double *: EmptyTuple
+
+							x.head // 42
+							x.tail // ('x', 3.14)
+						</code></pre>
+					</div>
+				</section>
+				<section data-markdown>
+					<textarea data-template>
+						### Inductive ~Types~ Memes
+						![](img/memeception.jpg)
+					</textarea>
+				</section>
+				<section>
+					<h3>Sum Associativity</h3>
+					<span>\[ (x + y) + z = x + (y + z) = x + y + z \]</span>
+					<span class="fragment">\[ \begin{aligned}
+						A + B + C + D + E &amp; \cong (A + B) + (C + D + E) \\
+						&amp; \cong A + (B + C) + (D + E) \\
+						&amp; \cong ((((A + B) + C) + D) + E
+					\end{aligned} \]</span>
+					<span class="fragment">It doesn't matter how we arrange the parentheses!</span>
+				</section>
+				<section>
+					<h3>Sum Identity</h3>
+					<span>\[ x + 0 = 0 + x = x \]</span>
+					<span class="fragment">\[ \begin{aligned}
+						A + B &amp; \cong A + B + \emptyset \\
+						&amp; \cong A + \emptyset + B \\
+						&amp; \cong \emptyset + A + \emptyset + B + \emptyset
+					\end{aligned} \]</span>
+					<span class="fragment">It doesn't matter if we add 0 (aka. Nothing)!</span>
+				</section>
+				<section>
+					<h3>Sum Commutativity</h3>
+					<span>\[ x + y = y + x \]</span>
+					<span class="fragment">\[ \begin{aligned}
+						A + B + C + D + E &amp; \cong B + C + A + E + D \\
+					 	&amp; \cong C + A + D + E + B \\
+						&amp; \cong E + D + C + B + A
+					\end{aligned} \]</span>
+					<p class="fragment">It doesn't matter how we order the parts!</p>
+					<p class="fragment">Problem - we must remember the mapping:</p>
+					<span class="fragment">\[ Int + Int + String \cong Int + String + Int \]</span>
+				</section>
+				<section data-markdown>
+					<textarea data-template>
+						### Sum Isomorphisms
+						```scala
+						// Scala 2
+						sealed trait PaymentMethod
+						case object Cash extends PaymentMethod
+						case class Cheque(number: String) extends PaymentMethod
+						case class Card(cardType: CardType, number: String)
+						  extends PaymentMethod
+						
+						// <=> Cash.type Either Cheque Either Card
+						// <=> Either[Cash.type, Either[Cheque, Card]]
+						// <=> Either[Cash.type, Either[Cheque, Either[Card, Nothing]]]
+						```
+						The last one is particularly interesting (it's _inductive_).
+						<!-- .element: class="fragment" -->
+					</textarea>
+				</section>
+				<section data-markdown>
+					<textarea data-template>
+						### Sum Isomorphisms
+						```scala
+						// Scala 3
+						enum PaymentMethod:
+						  case Cash
+						  case Cheque(number: String)
+						  case Card(cardType: CardType, number: String)
+						
+						// <=> Cash Either Cheque Either CreditCard
+						// <=> Either[Cash, Either[Cheque, CreditCard]]
+						// <=> Either[Cash, Either[Cheque, Either[CreditCard, Nothing]]]
+						// ...
+						// <=> Either[Unit,
+						//       Either[Tuple1[String],
+						//         Either[(CardType, String), Nothing]]]
+						```
+					</textarea>
+				</section>
+				<section>
+					<h3>Inductive Sums</h3>
+					<div class="container">
+						<pre class="column fragment scala"><code data-trim>
+							// Scala 2 - shapeless
+							sealed trait Coproduct
+							sealed trait :+:[+L, +R <: Coproduct]
+							  extends Coproduct
+							case class Inl[+L](value: L)
+							  extends L :+: Nothing
+							case class Inr[+R](value: R)
+							  extends Nothing :+: R
+							// Note: no values
+							sealed trait CNil extends Coproduct
+
+							val x: Int :+: String :+: CNil =
+							  Inr(Inl("snake"))
+						</code></pre>
+						<pre class="column fragment scala"><code data-trim>
+							// Scala 3 - disjoint unions!
+							val x: Int | String | Nothing = 42
+							
+							val size = x match
+							  case i: Int    => i
+							  case s: String => s.length
+
+							// Note: enums have "tags",
+							// therefore are guaranteed disjoint
+							enum Email:
+							  case Verified(address: EmailAddress)
+							  case Unverified(address: String)
+						</code></pre>
+					</div>
+				</section>
+				<section>
+					<h3>Aside - Labels</h3>
+					<p>Commutativity was problematic (mapping not unique)</p>
+					<p class="fragment">We can add tags (labels) on the type level!</p>
+					<div class="container">
+						<pre class="column fragment scala"><code data-trim>
+							// Scala 2 - shapeless
+							trait KeyTag[K, +V]
+							type FieldType[K, +V] =
+							  V with KeyTag[K, V]
+
+							def field[K, V](v: V): FieldType[K, V] =
+							  v.asInstanceOf[FieldType[K, V]]
+
+							case class Coord(x: Double, y: Double)
+							// <=> (this time unique mapping)
+							FieldType["y", Double] ::
+							  FieldType["x", Double] ::
+							    HNil
+						</code></pre>
+						<pre class="column fragment scala"><code data-trim>
+							// Scala 3 - opaque types
+							opaque type FieldType[K, +V] <: V = V
+							
+
+							// No cheating necessary
+							def field[K, V](v: V): FieldType[K, V] = v
+
+
+							case class Coord(x: Double, y: Double)
+							// <=> (this time unique mapping)
+							FieldType["y", Double] *:
+							  FieldType["x", Double] *:
+							    EmptyTuple
+						</code></pre>
+					</div>
+				</section>
+				<section data-markdown>
+					<textarea data-template>
+						### Take a Break
+						![](img/choice.jpg)
+					</textarea>
+				</section>
+				<section data-markdown>
+					<textarea data-template>
+						### Type Classes
+						Type classes are a mechanism for achieving polymorphism, i.e. "program to the interface".
+
+						We have two mechanisms for polymorphism: <!-- .element: class="fragment" -->
+
+						* Subtype polymorphism - dynamic dispatch (values)
+						<!-- .element: class="fragment" -->
+						* Type class polymorphism - static dispatch (types)
+						<!-- .element: class="fragment" -->
+					</textarea>
+				</section>
+				<section data-markdown>
+					<textarea data-template>
+						### Subtype Polymorphism
+						```scala
+						trait Money { // interface
+						  def amount: Double
+						  def show: String = s"$amount ¤"
+						}
+						case class Euro(amount: Double) {
+						  override def show: String = s"$amount €"
+						}
+						case class Pound(amount: Double) {
+						  override def show: String = s"$amount £"
+						}
+
+						val x: Money = Euro(9.99)
+						x.show // 9.99 €
+						```
+					</textarea>
+				</section>
+				<section>
+					<h3>Type Class Polymorphism</h3>
+					<div class="container">
+						<pre class="column fragment scala"><code data-trim>
+							// Scala 2 (boilerplate omitted)
+							trait Show[A] { // type class
+							  def show(a: A): String
+							}
+							object Show {
+							  implicit val money: Show[Money] =
+							    m => s"${m.amount} ¤"
+							  implicit val euro: Show[Euro] =
+							    e => s"${e.amount} €"
+							  implicit val pound: Show[Pound] =
+							    p => s"${p.amount} £"
+							}
+
+							val x: Money = Euro(9.99)
+							x.show // 9.99 ¤
+						</code></pre>
+						<pre class="column fragment scala"><code data-trim>
+							// Scala 3
+							trait Show[A]: // type class
+							  extension (a: A) def show: String
+
+							object Show
+							  given Show[Money] =
+							    m => s"${m.amount} ¤"
+							  given Show[Euro] =
+							    e => s"${e.amount} €"
+							  given Show[Pound] =
+							    p => s"${p.amount} £"
+
+
+							val x: Money = Euro(9.99)
+							x.show // 9.99 ¤
+						</code></pre>
+					</div>
+				</section>
+				<section data-markdown>
+					<textarea data-template>
+						### Type Classes are Better
+						* We can implement them for types we don't control
+						<!-- .element: class="fragment" -->
+						* We can implement methods which are impossible with subtypes
+						<!-- .element: class="fragment" -->
+						* We can systematically derive instances for ADTs
+						<!-- .element: class="fragment" -->
+						* Type classes with laws form non-leaky abstractions
+						<!-- .element: class="fragment" -->
+					</textarea>
+				</section>
+				<section data-markdown>
+					<textarea data-template>
+						### Running Example
+						```scala
+						trait Monoid[A]: // library: cats
+						  def empty: A
+						  extension (x: A)
+						    def ++(y: A): A
+						  extension (xs: List[A])
+							def combineAll: A = xs.foldLeft(empty)(_ ++ _)
+
+						object Monoid:
+						  given Monoid[Int] with
+							def empty = 0
+							extension (x: Int) def ++(y: Int): Int = x + y
+						  given Monoid[String] with
+						    def empty = ""
+							extension (x: String) def ++(y: String): String = x + y
+						```
+					</textarea>
+				</section>
+				<section data-markdown>
+					<textarea data-template>
+						### Implement for Third-Party Types
+						```scala
+						class BloomFilter[A]: // library: spark
+						  val log: HyperLogLog
+						  // ...
+
+						given [A]: Monoid[BloomFilter[A]] with
+						  def empty = BloomFilter.empty[A]
+						  extension (x: BloomFilter[A])
+							def ++(y: BloomFilter[A]): BloomFilter[A] =
+							  x.union(y)
+						```
+					</textarea>
+				</section>
+				<section data-markdown>
+					<textarea data-template>
+						### How Will You Do It with Subtypes?
+						```scala
+						trait Monoid[A <: Monoid[A]]: // F-bounded type
+						  def empty: A // I need an instance to get an empty one?
+						  def ++(that: A): A // ok-ish
+						
+						extension [A <: Monoid[A]](xs: List[A])
+						  def combineAll: A = ??? // what if the list is empty?
+
+						trait Filter[A] extends Monoid[Filter[A]]:
+						  def apply(a: A): Boolean
+						  def empty = _ => true
+						  def ++(that: Filter[A]) = a => this(a) && that(a)
+						  
+						class BloomFilter[A] extends Filter[A], Monoid[BloomFilter[A]]:
+						  def apply(a: A): Boolean = ??? // error
+						```
+					</textarea>
+				</section>
+				<section data-markdown>
+					<textarea data-template>
+						### Type Class + Laws = Abstraction
+						```scala
+						// Associativity
+						def associative[A: Monoid](x: A, y: A, z: A): Boolean =
+						  (x ++ y) ++ z == x ++ (y ++ z)
+
+						// Left Identity
+						def leftId[A: Monoid](x: A): Boolean =
+						  summon[Monoid[A]].empty ++ x == x
+
+						// Right Identity
+						def leftId[A: Monoid](x: A): Boolean =
+						  x ++ summon[Monoid[A]].empty == x
+						```
+					</textarea>
+				</section>
+				<section data-markdown>
+					<textarea data-template>
+						### Can We Derive It for This Type?
+						```scala
+						case class Statistics(
+						  count: Int,
+						  sum: Double,
+						  log: HyperLogLog,
+						  tags: Set[String]
+						) // derives Monoid
+						```
+					</textarea>
+				</section>
+				<section>
+					<h3>Compiler Generated Isomorphisms</h3>
+					<div class="container">
+						<pre class="column fragment scala"><code data-trim>
+							// Scala 2 - Generic (macros)
+							trait Generic[A] {
+							  type Repr // HList or Coproduct
+							  def to(x: A): Repr
+							  def from(r: Repr): A
+							}
+
+							val gen = Generic[Statistics]
+							// Generic[Statistics] {
+							//   type Out = Int ::
+							//     Double ::
+							//     HyperLogLog ::
+							//     Set[String] ::
+							//     HNil
+							// }
+						</code></pre>
+						<pre class="column fragment scala"><code data-trim>
+							// Scala 3 - Mirror (native)
+							trait Mirror:
+							  type MirroredType
+							  type MirroredElemTypes
+							  type MirroredLabel <: String
+							  type MirroredElemLabels <: Tuple
+
+							val mirror = summon[Mirror.Of[Statistics]]
+							// Mirror.Product:
+							//   type MirroredType = Statistics
+							//   type MirroredElemTypes =
+							//     (Int, Double, HyperLogLog, Set[String])
+							//   type MirroredLabel = "Statistics"
+							//   type MirroredElemLabels =
+							//     ("count", "sum", "log", "tags")
+						</code></pre>
+					</div>
+				</section>
+				<section>
+					<h3>Induction (Types and Values)</h3>
+					<div class="container">
+						<pre class="column fragment scala"><code data-trim>
+							// Scala 2 - implicits
+							implicit val base: Monoid[HNil] =
+							  Monoid.instance(HNil)((_, nil) => nil)
+							
+							implicit def step[
+							  H: Monoid,
+							  T <: HList: Monoid
+							]: Monoid[H :: T] = Monoid.instance(
+							  Monoid[H].empty :: Monoid[T].empty
+							) { case (x :: t, y :: u) =>
+							  (x ++ y) :: (t ++ y)
+							}
+						</code></pre>
+						<pre class="column fragment scala"><code data-trim>
+							// Scala 3 - match types + inline match
+							type Map[T <: Tuple, F[_]] <: Tuple = 
+							  T match
+							    case EmptyTuple => EmptyTuple
+							    case h *: t     => F[h] *: Map[t, F]
+
+							inline def summonAll[
+							  T <: Tuple
+							]: Tuple.Map[T, Monoid] =
+							  inline erasedValue[T] match
+							    case _: EmptyTuple => EmptyTuple
+							    case _: (h *: t) =>
+							      summonInline[Monoid[h]] *: summonAll[t]
+						</code></pre>
+					</div>
+				</section>
+				<section data-markdown>
+					<textarea data-template>
+						### More Induction
+						```scala
+						inline def empty[T <: Tuple]: Tuple.Map[T, [x] =>> x] =
+						  inline erasedValue[T] match
+						    case _: EmptyTuple => EmptyTuple
+						    case _: (h *: t) =>
+						      summonInline[Monoid[h]].empty *: empty[t]
+
+						inline def combine[
+						  T <: Tuple
+						]: Tuple.Map[T, [x] =>> (x, x) => x] =
+						  inline erasedValue[T] match
+						    case _: EmptyTuple => EmptyTuple
+						    case _: (h *: t) =>
+						      given Monoid[h] = summonInline[Monoid[h]]
+						      (_ ++ _) *: combine[t]
+						```
+					</textarea>
+				</section>
+				<section>
+					<h3>Bringing It All Together</h3>
+					<div class="container">
+						<pre class="column fragment scala"><code data-trim>
+							// Scala 2 (complete) - shapeless 2
+							implicit val base: Monoid[HNil] = ???
+							
+							implicit def step[
+							  H: Monoid,
+							  T <: HList: Monoid
+							]: Monoid[H :: T] = ???
+
+							implicit val derived[T, R: Monoid](
+							  implicit gen: Generic.Aux[T, R]
+							): Monoid[T] = Monoid.instance(
+							  gen.from(Monoid[R].empty)
+							) { (x, y) =>
+							  gen.from(gen.to(x) ++ gen.to(y))
+							}
+						</code></pre>
+						<pre class="column fragment scala"><code data-trim>
+							// Scala 3 (complete) - shapeless 3
+							implicit def generic[A](
+							  using k: K0.ProductInstances[Monoid, A]
+							): Monoid[A] = new:
+							  val empty = k.construct([t] =>
+							    (m: Monoid[t]) => m.empty)
+							  extension (x: A) def ++(y: A): A =
+							    k.map2(x, y)([t] =>
+							      (m: Monoid[t], a: t, b: t) =>
+							        m.combine(a, b))
+
+							inline def derived[A](
+							  using k: K0.ProductGeneric[A]
+							): Monoid[A] = generic(
+							  K0.mkProductInstances[Monoid, A](k))
+						</code></pre>
+					</div>
+				</section>
+				<section tagcloud>
+					JSON
+					Binary
+					Protocol Buffers
+					Parquet
+					JDBC Rows
+					Avro
+					Thrift
+					GraphQL
+					DynamoDB
+					Optics
+				</section>
+				<section>
+					<h3>Type Class Derivation with Kittens</h3>
+					<img src="img/kittens-1.png" class="r-stretch"/>
+				</section>
+				<section>
+					<h3>No Need to Stop at Kind *</h3>
+					<img src="img/kittens-2.png" class="r-stretch"/>
+				</section>
+				<section>
+					<h3>Main Takeaways</h3>
+					<img src="img/no-yes.jpg" class="r-stretch"/>
+					<p class="fragment" style="color: firebrick; font-weight: bold;">Scala 3 is awesome!</p>
+				</section>
+				<section data-markdown>
+					<textarea data-template>
+						### References
+						* [ADTs: Things I wish someone had explained about FP](https://jrsinclair.com/articles/2019/algebraic-data-types-what-i-wish-someone-had-explained-about-functional-programming/)
+						* [Illustrated guide to Types, Sets and Values](https://medium.com/@1jpablo1/illustrated-guide-to-types-sets-and-values-8093d0b7d648)
+						* [The algebra (and calculus!) of ADTs](https://codewords.recurse.com/issues/three/algebra-and-calculus-of-algebraic-data-types)
+						* [Counting type inhabitants](https://alexknvl.com/posts/counting-type-inhabitants.html)
+						* [Domain Modeling Made Functional](https://www.youtube.com/watch?v=Up7LcbGZFuo)
+						* [An algebra of graphs](https://blogs.ncl.ac.uk/andreymokhov/an-algebra-of-graphs/)
+						* [Of Algebirds, Monoids, Monads, and other Bestiary for Large-Scale Data Analytics](https://www.michael-noll.com/blog/2013/12/02/twitter-algebird-monoid-monad-for-large-scala-data-analytics/)
+						* [Returning the "Current" Type in Scala](https://tpolecat.github.io/2015/04/29/f-bounds.html)
+					</textarea>
+				</section>
 			</div>
 		</div>
 
@@ -25,15 +1190,24 @@
 		<script src="plugin/notes/notes.js"></script>
 		<script src="plugin/markdown/markdown.js"></script>
 		<script src="plugin/highlight/highlight.js"></script>
+		<script src="plugin/math/math.js"></script>
 		<script>
 			// More info about initialization & config:
 			// - https://revealjs.com/initialization/
 			// - https://revealjs.com/config/
 			Reveal.initialize({
 				hash: true,
-
 				// Learn about plugins: https://revealjs.com/plugins/
-				plugins: [ RevealMarkdown, RevealHighlight, RevealNotes ]
+				plugins: [ RevealMarkdown, RevealHighlight, RevealNotes, RevealMath ],
+				dependencies: [
+					{ src: 'plugin/tagcloud/tagcloud.js', async: true } 
+				],
+				math: {
+					mathjax: 'https://cdn.jsdelivr.net/gh/mathjax/mathjax@2.7.8/MathJax.js',
+					config: 'TeX-AMS_HTML-full',
+					// pass other options into `MathJax.Hub.Config()`
+					TeX: { Macros: { RR: "{\\bf R}" } }
+				},
 			});
 		</script>
 	</body>
